@@ -1,0 +1,107 @@
+---
+title: "Holy Bible App Redesign & AI Integration"
+description: "A strategic redesign and AI feature integration that shifted the product focus from aggressive monetization to user retention, boosting daily engagement by 25%."
+date: 2025-05-15
+tags: ["Retention", "UX Audit", "AI-powered Feature"]
+cover: "/images/bible.png"
+featured: false
+
+problem: "The previous version of the app prioritized aggressive monetization over user experience, resulting in severe screen clutter and a declining Period 1 Retention Rate of 58.7% (against a 65-70% benchmark). The Start Subscription rate was also underperforming at 3.2%."
+result: "17%"
+resultLabel: "Increase in P1 retention"
+resultContext: "2 months post-launch"
+
+holder: "Company"
+holderValue: "Eightpoint"
+
+role: "Product Designer"
+timeline: "Q2–Q3 2023"
+team:
+  - { role: "PM", name: "1 Product Manager" }
+  - { role: "Engineering", name: "1 iOS Engineer" }
+
+reveal: "/images/final-design.png"
+revealCaption: "Revised Holy Bible App Design that with AI-powered features and increased engagement."
+
+metrics:
+  - { value: "12%", label: "Increase in Start Trial Rate", delta: "2 months post-launch" }
+  - { value: "17%", label: "Increase in Retention", delta: "in P1" }
+  - { value: "25%", label: "Increase in User Engagament", delta: "measured by DAU" }
+  - { value: "#14", label: "Free Reference App", delta: "1 month post-launch in App Store " }
+
+reflection: "This project was a masterclass in prioritization. It's easy to get overwhelmed by a massive scope, but by letting data guide our focus (uncovering the Plan Tab bottleneck) and fixing our internal development processes, we let the quality of the work speak for itself ."
+
+url: "https://apps.apple.com/us/app/holy-bible-study-gods-word/id1666079454"
+---
+
+import ImagePlaceholder from "../../components/case-study/ImagePlaceholder.astro";
+
+## The Problem
+
+The goal was to overhaul the app to boost retention and reading engagement, but we faced significant structural and resourcing roadblocks:
+- **Scope vs. Resources:** The app's feature set was vast, and it was overwhelming to know where to begin . With limited resources, we couldn't redesign everything at once; I had to pinpoint exactly which areas would actually move the needle on retention.
+- **Broken Workflows:** The existing engineering process excluded design from key decision-making and lacked pre-release QA, resulting in poor implementation quality.
+- **Usability Debt:** Core features like "Compare Verses" were functionally broken, with only 20% of users engaging with them due to confusing, non-standard navigation.
+
+
+> Instead of guessing, I used analytics to narrow our scope down to two primary MVP focus areas: **fixing the core reading experience** and **completely overhauling the "Plan" tab.** Simultaneously, I re-engineered our cross-functional delivery process to ensure design quality.
+
+In addition, to solve a massive content bottleneck I found during investigation within the Plan tab, I designed an **AI-Automated Custom Plan Generator** guided by Google's People+AI framework. 
+
+<ImagePlaceholder src="/images/olddesign.png" />
+
+---
+
+## Fixing Core Usability - The Reading Experience
+
+When I first started, the scope of the redesign felt overwhelming . To find the highest-impact areas for retention, I mapped out the entire app architecture and dug into our analytics.
+
+### Opportunity (Core Reading Experience)
+
+For Bible readers, comparing different translations is an essential, highly valued feature. However, our data tracking showed the "Compare Verse" tool was severely underutilized, seeing only **20% engagement**. A subsequent cognitive walkthrough uncovered the root cause: the interface displayed entire chapters at once rather than isolating specific verses, completely failing to match the user's mental model for comparison .
+
+### The Fix
+
+I restructured the information architecture. The new design focuses on a single selected verse, clearly labels the current version at the top, and allows users to toggle multiple translation versions simultaneously for direct, side-by-side comparison .
+
+<ImagePlaceholder src="/images/before-after.png" />
+
+---
+
+## Using Data-Driven Prioritization to Narrow the Scope
+
+The previous data analysis also revealed a hidden opportunity: 45.2% of users interacted with the "Plan" Tab, making it the second most popular area for engagement . However, 19.4% of users abandoned the flow immediately after viewing a plan summary, indicating severe friction .
+
+> Making the Plan Tab our primary target for the MVP to boost retention.
+
+<ImagePlaceholder src="/images/narrow.png" />
+
+### The Bottleneck (Content Generation)
+
+Focusing on the Plan Tab uncovered a structural business issue: we only had 1 content writer for all mobile products . It was impossible to manually scale high-quality, diverse reading plans to keep users retained.
+
+<ImagePlaceholder src="/images/workflow.png" />
+
+### Scaling Content With AI & Trust
+
+Because we couldn't hire more writers, I explored **using LLMs to generate personalized daily reading plans** . I referenced the **Google People+AI Guidebook** to evaluate necessity and design the workflow . 
+
+<ImagePlaceholder src="/images/prompt.png" />
+
+### AI-powered Bible Plan Generation
+
+I designed a "Build Your Own Plan" flow that asks users for their topic (e.g., "Love & Relationships"), goals, and daily time commitment . To build trust, the UI clearly sets expectations regarding the AI's capabilities before generating the tailored JSON-driven content.
+
+<ImagePlaceholder src="/images/aiplan.png" />
+
+---
+
+## Elevating Organizational Design Maturity
+
+A major pain point was the agile process itself: it lacked cross-functional communication and focused on quantity over quality .
+
+### The Process Redesign
+
+I introduced three mandatory checkpoints into our lifecycle: a "Define & Planning" phase for roadmap alignment, a "Pre-release Review" to catch engineering implementation discrepancies, and a "Post-release Review" to analyze metrics . This gained stakeholder trust and vastly increased design visibility .
+
+<ImagePlaceholder src="/images/process.png" />

@@ -1,0 +1,336 @@
+---
+/**
+ * Carousel — image slideshow with tab controls on top.
+ * Usage in MDX:
+ *   <Carousel items={[
+ *     { label: "Group A — 8 pages", src: "/images/group-a.png", description: "..." },
+ *     { label: "Group B — 13 pages", src: "/images/group-b.png" },
+ *   ]} />
+ *
+ * Images go in src/assets/images/. Recommended size: 1400 × 1000 px (7/5).
+ */
+import { getImage } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface CarouselItem {
+  label: string;
+  description?: string;
+  src?: string;
+  alt?: string;
+  aspectRatio?: string;
+}
+
+interface Props {
+  items: CarouselItem[];
+  aspectRatio?: string;
+}
+
+const { items, aspectRatio = "7/5" } = Astro.props;
+
+const resolvedItems = await Promise.all(
+  items.map(async (item) => {
+    const imgData = await resolveImage(item.src);
+    const photoSrc = imgData
+      ? (await getImage({ src: imgData, width: 1400, format: "webp", quality: 90 })).src
+      : undefined;
+    return { ...item, photoSrc };
+  })
+);
+
+const uid = `cr-${Math.random().toString(36).slice(2, 8)}`;
+const hasDescriptions = resolvedItems.some((i) => i.description);
+---
+
+<div class="cr-outer" id={uid}>
+
+  <!-- ── Visual card: tabs + image only ─────────────────────── -->
+  <div class="cr-wrap">
+
+    <!-- ── Tab controls ─────────────────────────────────────── -->
+    <div class="cr-tabs" role="tablist">
+      {resolvedItems.map((item, i) => (
+        <button
+          class={`cr-tab${i === 0 ? " cr-tab--active" : ""}`}
+          role="tab"
+          aria-selected={i === 0 ? "true" : "false"}
+          data-index={i}
+        >
+          <span class="cr-tab-index">{i + 1}</span>
+          <span class="cr-tab-label">{item.label}</span>
+        </button>
+      ))}
+    </div>
+
+    <!-- ── Slides ─────────────────────────────────────────────── -->
+    <div class="cr-viewport">
+      {resolvedItems.map((item, i) => (
+        <div
+          class={`cr-slide${i === 0 ? " cr-slide--active" : ""}`}
+          role="tabpanel"
+          data-index={i}
+          aria-hidden={i !== 0 ? "true" : "false"}
+        >
+          <div class="cr-img-wrap" style={item.photoSrc ? '' : `aspect-ratio:${item.aspectRatio ?? aspectRatio};`}>
+            {item.photoSrc ? (
+              <img
+                src={item.photoSrc}
+                alt={item.alt ?? item.label}
+                class="cr-img"
+              />
+            ) : (
+              <div class="cr-placeholder">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span class="cr-placeholder-label">Add image · {item.aspectRatio ?? aspectRatio}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div><!-- /cr-wrap -->
+
+  <!-- ── Caption — outside the card, updated by JS ─────────── -->
+  {hasDescriptions && (
+    <p
+      class="cr-desc"
+      data-descs={JSON.stringify(resolvedItems.map((i) => i.description ?? ""))}
+    >
+      {resolvedItems[0]?.description ?? ""}
+    </p>
+  )}
+
+  <!-- ── Arrow nav — outside the card ──────────────────────── -->
+  <div class="cr-arrows">
+    <button class="cr-arrow cr-arrow--prev" aria-label="Previous">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <span class="cr-counter"><span class="cr-current">1</span> / {resolvedItems.length}</span>
+    <button class="cr-arrow cr-arrow--next" aria-label="Next">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+  </div>
+
+</div><!-- /cr-outer -->
+
+
+<script>
+  document.querySelectorAll<HTMLElement>("[id^='cr-']").forEach((outer) => {
+    const tabs    = Array.from(outer.querySelectorAll<HTMLElement>(".cr-tab"));
+    const slides  = Array.from(outer.querySelectorAll<HTMLElement>(".cr-slide"));
+    const counter = outer.querySelector<HTMLElement>(".cr-current");
+    const descEl  = outer.querySelector<HTMLElement>(".cr-desc");
+    const descs: string[] = descEl
+      ? JSON.parse(descEl.dataset.descs ?? "[]")
+      : [];
+    let current = 0;
+
+    function goTo(n: number) {
+      tabs[current].classList.remove("cr-tab--active");
+      tabs[current].setAttribute("aria-selected", "false");
+      slides[current].classList.remove("cr-slide--active");
+      slides[current].setAttribute("aria-hidden", "true");
+
+      current = (n + slides.length) % slides.length;
+
+      tabs[current].classList.add("cr-tab--active");
+      tabs[current].setAttribute("aria-selected", "true");
+      slides[current].classList.add("cr-slide--active");
+      slides[current].setAttribute("aria-hidden", "false");
+
+      if (counter) counter.textContent = String(current + 1);
+      if (descEl)  descEl.textContent  = descs[current] ?? "";
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => goTo(Number(tab.dataset.index)));
+    });
+
+    outer.querySelector(".cr-arrow--prev")?.addEventListener("click", () => goTo(current - 1));
+    outer.querySelector(".cr-arrow--next")?.addEventListener("click", () => goTo(current + 1));
+  });
+</script>
+
+<style>
+  .cr-outer {
+    margin: 1.75rem 0;
+  }
+
+  /* ── Visual card wraps ONLY tabs + image ── */
+  .cr-wrap {
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* ── Tabs ── */
+  .cr-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cr-tabs::-webkit-scrollbar { display: none; }
+
+  .cr-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    background: none;
+    border: none;
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+    min-width: 0;
+  }
+  .cr-tab:last-child { border-right: none; }
+  .cr-tab:hover { background: var(--bg-alt); }
+
+  .cr-tab--active {
+    background: var(--bg-alt);
+    box-shadow: inset 0 -2px 0 var(--coral);
+  }
+
+  .cr-tab-index {
+    flex-shrink: 0;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 9999px;
+    background: var(--tag-bg);
+    color: var(--text-3);
+    font-size: 0.62rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .cr-tab--active .cr-tab-index {
+    background: var(--coral);
+    color: #fff;
+  }
+
+  .cr-tab-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s;
+  }
+  .cr-tab--active .cr-tab-label { color: var(--text); }
+
+  /* ── Slides ── */
+  .cr-viewport { position: relative; }
+
+  .cr-slide {
+    display: none;
+    animation: cr-fade 0.3s ease;
+  }
+  .cr-slide--active { display: block; }
+
+  @keyframes cr-fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .cr-img-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--bg-alt);
+    min-width: 0;
+  }
+
+  .cr-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .cr-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--coral);
+    opacity: 0.4;
+    border: 1.5px dashed var(--coral-mid);
+    margin: 1.25rem;
+    border-radius: 0.75rem;
+  }
+
+  .cr-placeholder-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Caption — below the card, no background ── */
+  .cr-desc {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--text-2);
+    line-height: 1.65;
+    padding: 0.6rem 0.25rem 0;
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ── Arrow nav — below caption, no background ── */
+  .cr-arrows {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.65rem 0;
+  }
+
+  .cr-arrow {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .cr-arrow:hover {
+    border-color: var(--coral-mid);
+    color: var(--coral);
+    background: var(--coral-dim);
+  }
+
+  .cr-counter {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-3);
+    letter-spacing: 0.04em;
+    min-width: 3rem;
+    text-align: center;
+  }
+</style>

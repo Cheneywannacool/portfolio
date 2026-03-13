@@ -1,0 +1,700 @@
+---
+/**
+ * DietTypePrototype — interactive phone prototype for the Arc7 diet type
+ * selection screen. Shows 3 states:
+ *   1. Diet list selection
+ *   2. Preset diet — static macro bars (no slider)
+ *   3. Customize — interactive sliders, error state when total ≠ 100%
+ */
+---
+
+<div class="dtp-outer">
+  <div class="dtp-phone" id="dtpPhone">
+
+    <!-- Status bar -->
+    <div class="dtp-statusbar">
+      <span class="dtp-time">9:41</span>
+      <div class="dtp-status-icons">
+        <svg width="16" height="8" viewBox="0 0 16 8" fill="none">
+          <rect x="0" y="3" width="2.5" height="5" rx="0.5" fill="#000"/>
+          <rect x="3.5" y="2" width="2.5" height="6" rx="0.5" fill="#000"/>
+          <rect x="7" y="0.5" width="2.5" height="7.5" rx="0.5" fill="#000"/>
+          <rect x="10.5" y="0" width="2.5" height="8" rx="0.5" fill="#000" opacity="0.3"/>
+          <rect x="14" y="1" width="2" height="6" rx="1" fill="#000" opacity="0.2"/>
+          <rect x="14.2" y="1.2" width="1.6" height="5.6" rx="0.8" fill="#000"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+          <path d="M8 2.5C10.8 2.5 13.3 3.7 15 5.7L16 4.5C14 2.1 11.2 0.5 8 0.5C4.8 0.5 2 2.1 0 4.5L1 5.7C2.7 3.7 5.2 2.5 8 2.5Z" fill="#000"/>
+          <path d="M8 5.5C9.9 5.5 11.6 6.3 12.8 7.6L13.9 6.4C12.4 4.8 10.3 3.8 8 3.8C5.7 3.8 3.6 4.8 2.1 6.4L3.2 7.6C4.4 6.3 6.1 5.5 8 5.5Z" fill="#000"/>
+          <circle cx="8" cy="10.5" r="1.5" fill="#000"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- App bar -->
+    <div class="dtp-appbar">
+      <button class="dtp-back-btn" id="dtpBack" aria-label="Back">
+        <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+          <path d="M7 1L1 7L7 13" stroke="#7430FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="dtp-logo">Arc<span>7</span></div>
+    </div>
+
+    <!-- Progress stepper -->
+    <div class="dtp-progress">
+      <div class="dtp-step"></div>
+      <div class="dtp-step"></div>
+      <div class="dtp-step dtp-step--active"></div>
+      <div class="dtp-step"></div>
+    </div>
+
+    <!-- ── SCREEN 1: Diet Selection ─────────────────── -->
+    <div class="dtp-screen" id="dtpScreenSelect">
+      <div class="dtp-scroll-area">
+        <h2 class="dtp-title">Your <span>Preferred Diet Type</span></h2>
+        <ul class="dtp-list" id="dtpList">
+          <li class="dtp-item dtp-item--selected" data-diet="balanced" data-icon="🍏">
+            <span class="dtp-icon-wrap">🍏</span><span>Balanced</span>
+          </li>
+          <li class="dtp-item" data-diet="keto" data-icon="🥩">
+            <span class="dtp-icon-wrap">🥩</span><span>Keto</span>
+          </li>
+          <li class="dtp-item" data-diet="vegetarian" data-icon="🥦">
+            <span class="dtp-icon-wrap">🥦</span><span>Vegetarian</span>
+          </li>
+          <li class="dtp-item" data-diet="mediterranean" data-icon="🐟">
+            <span class="dtp-icon-wrap">🐟</span><span>Mediterranean</span>
+          </li>
+          <li class="dtp-item" data-diet="vegan" data-icon="🥕">
+            <span class="dtp-icon-wrap">🥕</span><span>Vegan</span>
+          </li>
+          <li class="dtp-item" data-diet="paleo" data-icon="🥑">
+            <span class="dtp-icon-wrap">🥑</span><span>Paleo</span>
+          </li>
+        </ul>
+        <button class="dtp-customize-link" id="dtpCustomizeBtn">
+          <strong>+ Customize</strong> your diet type
+        </button>
+        <p class="dtp-info-note">All diet information can be found <u>here</u></p>
+      </div>
+      <!-- No footer/button on selection screen — tile tap navigates directly -->
+    </div>
+
+    <!-- ── SCREEN 2: Preset Macros ──────────────────── -->
+    <div class="dtp-screen dtp-hidden" id="dtpScreenPreset">
+      <div class="dtp-scroll-area">
+        <h2 class="dtp-title">Your <span>Preferred Diet Type</span></h2>
+        <div class="dtp-chip" id="dtpPresetChip">
+          <span class="dtp-chip-icon" id="dtpPresetIcon">🍏</span>
+          <span id="dtpPresetName">Balanced</span>
+        </div>
+        <p class="dtp-desc">Here are macronutrient goals based on the recommended diet type</p>
+        <div class="dtp-macros">
+          <div class="dtp-macro-row">
+            <div class="dtp-macro-labels">
+              <span class="dtp-macro-name">Carbs</span>
+              <span class="dtp-macro-g">1,000g</span>
+              <span class="dtp-pct dtp-green" id="dtpPCarbsPct">50%</span>
+            </div>
+            <div class="dtp-bar-track"><div class="dtp-bar dtp-bar--carbs" id="dtpPCarbsBar" style="width:50%"></div></div>
+          </div>
+          <div class="dtp-macro-row">
+            <div class="dtp-macro-labels">
+              <span class="dtp-macro-name">Protein</span>
+              <span class="dtp-macro-g">1,000g</span>
+              <span class="dtp-pct dtp-red" id="dtpPProteinPct">25%</span>
+            </div>
+            <div class="dtp-bar-track"><div class="dtp-bar dtp-bar--protein" id="dtpPProteinBar" style="width:25%"></div></div>
+          </div>
+          <div class="dtp-macro-row">
+            <div class="dtp-macro-labels">
+              <span class="dtp-macro-name">Fat</span>
+              <span class="dtp-macro-g">1,000g</span>
+              <span class="dtp-pct dtp-yellow" id="dtpPFatPct">25%</span>
+            </div>
+            <div class="dtp-bar-track"><div class="dtp-bar dtp-bar--fat" id="dtpPFatBar" style="width:25%"></div></div>
+          </div>
+        </div>
+        <p class="dtp-footnote">*% based on recommended daily values for this diet</p>
+      </div>
+      <div class="dtp-footer">
+        <button class="dtp-primary-btn" id="dtpPresetDone">Last Steps <span>→</span></button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 3: Customize ──────────────────────── -->
+    <div class="dtp-screen dtp-hidden" id="dtpScreenCustomize">
+      <div class="dtp-scroll-area">
+        <h2 class="dtp-title">Your <span>Preferred Diet Type</span></h2>
+        <div class="dtp-chip">
+          <span class="dtp-chip-icon">🍽️</span>
+          <span>Customized</span>
+        </div>
+        <div class="dtp-total-row">
+          <span class="dtp-total-label">Total Macronutrient</span>
+          <strong class="dtp-total-num" id="dtpTotal">100%</strong>
+        </div>
+        <div class="dtp-sliders">
+          <div class="dtp-slider-group">
+            <div class="dtp-macro-labels">
+              <span class="dtp-macro-name">Carbs</span>
+              <span class="dtp-macro-g">1,000g</span>
+              <span class="dtp-pct dtp-green" id="dtpCarbsPct">40%</span>
+            </div>
+            <input type="range" id="dtpCarbsSlider" min="5" max="90" value="40" class="dtp-range dtp-range--carbs">
+          </div>
+          <div class="dtp-slider-group">
+            <div class="dtp-macro-labels">
+              <span class="dtp-macro-name">Protein</span>
+              <span class="dtp-macro-g">1,000g</span>
+              <span class="dtp-pct dtp-red" id="dtpProteinPct">30%</span>
+            </div>
+            <input type="range" id="dtpProteinSlider" min="5" max="90" value="30" class="dtp-range dtp-range--protein">
+          </div>
+          <div class="dtp-slider-group">
+            <div class="dtp-macro-labels">
+              <span class="dtp-macro-name">Fat</span>
+              <span class="dtp-macro-g">1,000g</span>
+              <span class="dtp-pct dtp-yellow" id="dtpFatPct">30%</span>
+            </div>
+            <input type="range" id="dtpFatSlider" min="5" max="90" value="30" class="dtp-range dtp-range--fat">
+          </div>
+        </div>
+        <p class="dtp-footnote">*% based on recommended daily values for this diet</p>
+      </div>
+      <div class="dtp-footer">
+        <button class="dtp-error-btn dtp-hidden" id="dtpErrorBtn">Percentages must total 100%</button>
+        <button class="dtp-primary-btn" id="dtpCustomizeDone">Last Steps <span>→</span></button>
+      </div>
+    </div>
+
+    <!-- Home indicator -->
+    <div class="dtp-home-bar"></div>
+  </div>
+</div>
+
+<script>
+  const DIETS: Record<string, { carbs: number; protein: number; fat: number }> = {
+    balanced:      { carbs: 50, protein: 25, fat: 25 },
+    keto:          { carbs: 5,  protein: 30, fat: 65 },
+    vegetarian:    { carbs: 55, protein: 20, fat: 25 },
+    mediterranean: { carbs: 45, protein: 25, fat: 30 },
+    vegan:         { carbs: 60, protein: 20, fat: 20 },
+    paleo:         { carbs: 20, protein: 35, fat: 45 },
+  };
+
+  let currentDiet = "balanced";
+  let animating = false;
+
+  // ── Helpers ──────────────────────────────────────
+  function showScreen(id: string) {
+    ["dtpScreenSelect", "dtpScreenPreset", "dtpScreenCustomize"].forEach((s) => {
+      const el = document.getElementById(s);
+      if (el) {
+        if (s === id) { el.classList.remove("dtp-hidden"); el.classList.add("dtp-fade-in"); }
+        else           el.classList.add("dtp-hidden");
+      }
+    });
+  }
+
+  function setSliderFill(sliderId: string, value: number, color: string) {
+    const el = document.getElementById(sliderId) as HTMLInputElement | null;
+    if (!el) return;
+    const pct = ((value - 5) / 85) * 100;
+    el.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${pct}%, #e6e5db ${pct}%, #e6e5db 100%)`;
+  }
+
+  function updateCustomize() {
+    const c = parseInt((document.getElementById("dtpCarbsSlider") as HTMLInputElement).value);
+    const p = parseInt((document.getElementById("dtpProteinSlider") as HTMLInputElement).value);
+    const f = parseInt((document.getElementById("dtpFatSlider") as HTMLInputElement).value);
+    const total = c + p + f;
+
+    (document.getElementById("dtpCarbsPct")!).textContent   = `${c}%`;
+    (document.getElementById("dtpProteinPct")!).textContent = `${p}%`;
+    (document.getElementById("dtpFatPct")!).textContent     = `${f}%`;
+
+    const totalEl = document.getElementById("dtpTotal")!;
+    totalEl.textContent = `${total}%`;
+    totalEl.style.color = total === 100 ? "#7430ff" : "#f06257";
+
+    const isError = total !== 100;
+    document.getElementById("dtpErrorBtn")!.classList.toggle("dtp-hidden", !isError);
+    document.getElementById("dtpCustomizeDone")!.classList.toggle("dtp-hidden", isError);
+
+    setSliderFill("dtpCarbsSlider",   c, "#61a94a");
+    setSliderFill("dtpProteinSlider", p, "#f06257");
+    setSliderFill("dtpFatSlider",     f, "#a66c26");
+  }
+
+  function animateDemoSlider() {
+    if (animating) return;
+    animating = true;
+    const slider = document.getElementById("dtpCarbsSlider") as HTMLInputElement;
+    let v = 40;
+    const step = (dir: 1 | -1, target: number, done?: () => void) => {
+      const t = setInterval(() => {
+        v += dir;
+        slider.value = String(v);
+        updateCustomize();
+        if (v === target) { clearInterval(t); done?.(); }
+      }, 40);
+    };
+    // 40 → 55 (show error) → back to 40 (valid again)
+    step(1, 55, () => setTimeout(() => step(-1, 40, () => { animating = false; }), 400));
+  }
+
+  // ── Wire up: tile tap → directly navigate to preset ──
+  function navigateToPreset(diet: string) {
+    currentDiet = diet;
+    document.querySelectorAll(".dtp-item").forEach((i) => i.classList.remove("dtp-item--selected"));
+    document.querySelector(`.dtp-item[data-diet="${diet}"]`)?.classList.add("dtp-item--selected");
+
+    const d = DIETS[diet];
+    const name = diet.charAt(0).toUpperCase() + diet.slice(1);
+    const icon = document.querySelector<HTMLElement>(`.dtp-item[data-diet="${diet}"] .dtp-icon-wrap`)?.textContent ?? "🍽️";
+
+    document.getElementById("dtpPresetName")!.textContent = name;
+    document.getElementById("dtpPresetIcon")!.textContent = icon;
+    document.getElementById("dtpPCarbsPct")!.textContent   = `${d.carbs}%`;
+    document.getElementById("dtpPProteinPct")!.textContent = `${d.protein}%`;
+    document.getElementById("dtpPFatPct")!.textContent     = `${d.fat}%`;
+    (document.getElementById("dtpPCarbsBar") as HTMLElement).style.width   = `${d.carbs}%`;
+    (document.getElementById("dtpPProteinBar") as HTMLElement).style.width = `${d.protein}%`;
+    (document.getElementById("dtpPFatBar") as HTMLElement).style.width     = `${d.fat}%`;
+
+    showScreen("dtpScreenPreset");
+  }
+
+  document.querySelectorAll<HTMLElement>(".dtp-item").forEach((item) => {
+    item.addEventListener("click", () => navigateToPreset(item.dataset.diet ?? "balanced"));
+  });
+
+  // ── Customize link → customize screen ────────────
+  document.getElementById("dtpCustomizeBtn")!.addEventListener("click", () => {
+    (document.getElementById("dtpCarbsSlider") as HTMLInputElement).value   = "40";
+    (document.getElementById("dtpProteinSlider") as HTMLInputElement).value = "30";
+    (document.getElementById("dtpFatSlider") as HTMLInputElement).value     = "30";
+    updateCustomize();
+    showScreen("dtpScreenCustomize");
+    setTimeout(animateDemoSlider, 600);
+  });
+
+  // ── Back buttons ──────────────────────────────────
+  document.getElementById("dtpBack")!.addEventListener("click", () => {
+    showScreen("dtpScreenSelect");
+  });
+  document.getElementById("dtpPresetDone")!.addEventListener("click", () => {
+    showScreen("dtpScreenSelect");
+  });
+  document.getElementById("dtpCustomizeDone")!.addEventListener("click", () => {
+    showScreen("dtpScreenSelect");
+  });
+
+  // ── Slider interactions ───────────────────────────
+  ["dtpCarbsSlider", "dtpProteinSlider", "dtpFatSlider"].forEach((id) => {
+    document.getElementById(id)!.addEventListener("input", updateCustomize);
+  });
+
+  // Init slider fills
+  updateCustomize();
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&display=swap');
+
+  .dtp-outer {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+
+  /* Phone shell — 393×852 scaled to 300×650 */
+  .dtp-phone {
+    width: 300px;
+    height: 650px;
+    background: #fff;
+    border-radius: 40px;
+    box-shadow:
+      0 0 0 1.5px #d0d0d0,
+      0 24px 60px rgba(0,0,0,0.18),
+      0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    font-family: 'Albert Sans', system-ui, -apple-system, sans-serif;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .dtp-statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    flex-shrink: 0;
+  }
+  .dtp-status-icons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* App bar */
+  .dtp-appbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 40px;
+    flex-shrink: 0;
+  }
+  .dtp-back-btn {
+    position: absolute;
+    left: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    transition: background 0.15s;
+  }
+  .dtp-back-btn:hover { background: rgba(116,48,255,0.08); }
+  .dtp-logo {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+    letter-spacing: -0.5px;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+  .dtp-logo span { color: #7430ff; }
+
+  /* Progress */
+  .dtp-progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 0 4px;
+    flex-shrink: 0;
+  }
+  .dtp-step {
+    width: 30px;
+    height: 2px;
+    border-radius: 2px;
+    background: #e6e5db;
+  }
+  .dtp-step--active { background: #7430ff; }
+
+  /* Screens — flex column: scroll area + pinned footer */
+  .dtp-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Scrollable content area — 24px from progress to title */
+  .dtp-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 22px 0;
+    scrollbar-width: none;
+  }
+  .dtp-scroll-area::-webkit-scrollbar { display: none; }
+
+  /* Pinned footer — 32px from button bottom to phone edge, home indicator inside */
+  .dtp-footer {
+    flex-shrink: 0;
+    padding: 8px 22px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+  }
+  /* Home indicator line rendered inside footer so total gap = exactly 32px */
+  .dtp-footer::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 4px;
+    background: rgba(0,0,0,0.14);
+    border-radius: 2px;
+  }
+  .dtp-hidden { display: none !important; }
+  .dtp-fade-in { animation: dtp-fade 0.25s ease; }
+  @keyframes dtp-fade {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Title — top margin zeroed (24px comes from scroll-area padding), 48px to first content */
+  .dtp-title {
+    font-size: 21px;
+    font-weight: 400;
+    text-align: center;
+    color: #000;
+    margin: 0 0 48px !important;
+    padding: 0 !important;
+    letter-spacing: -0.2px;
+    line-height: 1.25;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+  .dtp-title span { color: #7430ff; }
+
+  /* Diet list */
+  .dtp-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 0 10px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .dtp-item {
+    list-style: none !important;
+    list-style-type: none !important;
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 14px;
+    border: 1.5px solid #d6ccec;
+    border-radius: 8px;
+    background: #fbfcfe;
+    cursor: pointer;
+    font-size: 13px;
+    color: #263044;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .dtp-item > span:last-child {
+    width: 100%;
+    text-align: center;
+  }
+  .dtp-item::before,
+  .dtp-item::marker { content: none !important; display: none !important; }
+  .dtp-item:hover { border-color: #7430ff; background: #f9f7fc; }
+  .dtp-item--selected {
+    border-color: #7430ff;
+    font-weight: 600;
+    color: #27115f;
+  }
+  .dtp-icon-wrap {
+    position: absolute;
+    left: 14px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Customize link */
+  .dtp-customize-link {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #34342d;
+    cursor: pointer;
+    padding: 8px 0 4px;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+  .dtp-customize-link strong { color: #7430ff; }
+  .dtp-info-note {
+    text-align: center;
+    font-size: 12px;
+    color: #34342d;
+    margin: 4px 0 14px;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+
+  /* Primary button */
+  .dtp-primary-btn {
+    width: 100%;
+    background: #7430ff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+    transition: opacity 0.15s;
+  }
+  .dtp-primary-btn:hover { opacity: 0.88; }
+
+  /* Chip — same tile style as list items */
+  .dtp-chip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 14px;
+    border: 1.5px solid #7430ff;
+    border-radius: 8px;
+    background: #fbfcfe;
+    margin-bottom: 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #27115f;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+  .dtp-chip-icon {
+    position: absolute;
+    left: 14px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .dtp-chip > span:last-child {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Description */
+  .dtp-desc {
+    font-size: 10px;
+    color: #66645c;
+    text-align: center;
+    margin: 0 0 18px;
+    line-height: 1.55;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+
+  /* Macro rows */
+  .dtp-macros { display: flex; flex-direction: column; gap: 18px; margin-bottom: 12px; }
+  .dtp-macro-labels {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 7px;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+  .dtp-macro-name { flex: 1; color: #34342d; }
+  .dtp-macro-g { color: #34342d; margin-right: 10px; }
+  .dtp-pct { font-weight: 600; font-size: 13px; min-width: 36px; text-align: right; }
+  .dtp-green  { color: #61a94a; }
+  .dtp-red    { color: #f06257; }
+  .dtp-yellow { color: #a66c26; }
+
+  .dtp-bar-track {
+    height: 5px;
+    background: #e6e5db;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .dtp-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.45s ease;
+  }
+  .dtp-bar--carbs   { background: #61a94a; }
+  .dtp-bar--protein { background: #f06257; }
+  .dtp-bar--fat     { background: #a66c26; }
+
+  /* Footnote */
+  .dtp-footnote {
+    font-size: 9px;
+    color: #66645c;
+    margin: 6px 0 16px;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+
+  /* Total row */
+  .dtp-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .dtp-total-label {
+    font-size: 13px;
+    color: #263044;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+  .dtp-total-num {
+    font-size: 20px;
+    font-weight: 700;
+    color: #7430ff;
+    letter-spacing: -0.3px;
+    transition: color 0.2s;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+  }
+
+  /* Sliders */
+  .dtp-sliders { display: flex; flex-direction: column; gap: 18px; margin-bottom: 12px; }
+  .dtp-slider-group { display: flex; flex-direction: column; gap: 7px; }
+
+  .dtp-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    background: #e6e5db;
+  }
+  .dtp-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    transform: rotate(45deg);
+    cursor: grab;
+    background: #fff;
+    border: 2.5px solid;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  }
+  .dtp-range:active::-webkit-slider-thumb { transform: rotate(45deg) scale(1.1); cursor: grabbing; }
+  .dtp-range--carbs::-webkit-slider-thumb   { border-color: #61a94a; }
+  .dtp-range--protein::-webkit-slider-thumb { border-color: #f06257; }
+  .dtp-range--fat::-webkit-slider-thumb     { border-color: #a66c26; }
+  .dtp-range::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 4px;
+    transform: rotate(45deg); cursor: grab;
+    background: #fff; border: 2.5px solid #7430ff;
+  }
+
+  /* Error button */
+  .dtp-error-btn {
+    width: 100%;
+    background: #fdf0f0;
+    color: #f06257;
+    border: 1.5px solid #f06257;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    font-family: 'Albert Sans', system-ui, sans-serif;
+    cursor: default;
+  }
+
+  /* Home bar hidden — indicator lives in .dtp-footer::after */
+  .dtp-home-bar { display: none; }
+</style>

@@ -1,0 +1,202 @@
+---
+/**
+ * Executive Summary — "The TL;DR"
+ * Shows: cover image, one-sentence problem, and the key result metric.
+ */
+
+interface Props {
+  title: string;
+  description: string;
+  cover?: string;
+  problem?: string;
+  result?: string;
+  resultLabel?: string;
+  resultContext?: string;
+  tags: string[];
+  featured?: boolean;
+}
+
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+const {
+  title,
+  description,
+  cover,
+  problem,
+  result,
+  resultLabel,
+  resultContext,
+  tags,
+  featured = false,
+} = Astro.props;
+
+const coverImageData = await resolveImage(cover);
+---
+
+<section style="margin-bottom:0;">
+  <!-- Cover image — full width, tall, immersive -->
+  {(coverImageData || cover) && (
+    <div style="
+      width: 100%;
+      border-radius: 2rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+      position: relative;
+    ">
+      {coverImageData ? (
+        <Image
+          src={coverImageData}
+          alt={`${title} cover`}
+          widths={[900, 1800, 3600]}
+          sizes="(max-width: 900px) 100vw, 830px"
+          format="webp"
+          quality={90}
+          style="width:100%;display:block;aspect-ratio:3/2;object-fit:cover;"
+        />
+      ) : (
+        <img src={cover} alt={`${title} cover`} style="width:100%;display:block;aspect-ratio:3/2;object-fit:cover;" />
+      )}
+      {featured && (
+        <span style="
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #fff;
+          background: var(--coral);
+          padding: 0.25rem 0.75rem;
+          border-radius: 9999px;
+          box-shadow: 0 2px 10px var(--coral-glow);
+        ">Featured</span>
+      )}
+    </div>
+  )}
+
+  <!-- TL;DR card -->
+  <div style="
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 1.75rem;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  ">
+    <!-- Title + problem row -->
+    <div style="
+      padding: 2rem 2.25rem;
+      border-bottom: 1px solid var(--border);
+    ">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <span style="
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--coral);
+          background: var(--coral-dim);
+          padding: 0.2rem 0.65rem;
+          border-radius: 9999px;
+        ">TL;DR</span>
+        {tags.map(tag => (
+          <span style="
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: var(--tag-text);
+            background: var(--tag-bg);
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+          ">{tag}</span>
+        ))}
+      </div>
+
+      <h1 style="
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        font-weight: 400;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 0.875rem;
+      ">{title}</h1>
+
+      <p style="font-size:1rem;font-weight:300;line-height:1.7;color:var(--text-2);max-width:54ch;">
+        {description}
+      </p>
+    </div>
+
+    <!-- Problem + Result row -->
+    <div style="display:grid;grid-template-columns:1fr auto;gap:0;">
+      <!-- The Problem -->
+      <div style="
+        padding: 1.5rem 2.25rem;
+        border-right: 1px solid var(--border);
+      ">
+        <p style="
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--text-3);
+          margin-bottom: 0.5rem;
+        ">The Problem</p>
+        {problem ? (
+          <p style="
+            font-family: var(--font-sans);
+            font-size: 0.9375rem;
+            font-weight: 400;
+            line-height: 1.7;
+            color: var(--text);
+            max-width: 52ch;
+          ">{problem}</p>
+        ) : (
+          <p style="font-family:var(--font-sans);font-size:0.9375rem;font-weight:300;color:var(--text-2);line-height:1.7;">{description}</p>
+        )}
+      </div>
+
+      <!-- The Result -->
+      {result && (
+        <div style="
+          padding: 1.5rem 2.25rem;
+          min-width: 11rem;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          background: var(--card);
+        ">
+          <p style="
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-bottom: 0.5rem;
+          ">The Result</p>
+          <p style="
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-style: italic;
+            font-size: clamp(2rem, 5vw, 2.75rem);
+            line-height: 1;
+            color: var(--coral);
+            margin-bottom: 0.3rem;
+          ">{result}</p>
+          {resultLabel && (
+            <p style="font-size:0.78rem;font-weight:600;color:var(--text-2);line-height:1.3;">{resultLabel}</p>
+          )}
+          {resultContext && (
+            <p style="font-size:0.72rem;font-weight:300;color:var(--text-3);margin-top:0.2rem;">{resultContext}</p>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

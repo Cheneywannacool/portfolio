@@ -1,0 +1,118 @@
+---
+/**
+ * DietTypeSplit — Before image on the left, interactive prototype on the right.
+ * Used in Arc7.mdx for the Diet Type redesign section.
+ */
+
+interface Props {
+  beforeSrc: string;
+  beforeDesc?: string;
+}
+
+import { resolveImage } from "../../utils/images";
+import DietTypePrototype from "./DietTypePrototype.astro";
+
+const { beforeSrc, beforeDesc } = Astro.props;
+const beforeImageData = await resolveImage(beforeSrc);
+---
+
+<div class="dts-wrap">
+
+  <!-- Before -->
+  <div class="dts-panel">
+    <div class="dts-media">
+      {beforeImageData ? (
+        <img src={beforeImageData.src} alt="Before redesign" class="dts-img" />
+      ) : (
+        <img src={beforeSrc} alt="Before redesign" class="dts-img" />
+      )}
+    </div>
+    <p class="dts-label dts-label--before">← Before</p>
+    {beforeDesc && <p class="dts-desc">{beforeDesc}</p>}
+  </div>
+
+  <!-- After: interactive prototype -->
+  <div class="dts-panel dts-panel--after">
+    <DietTypePrototype />
+    <p class="dts-label dts-label--after">After →</p>
+    <p class="dts-hint">✦ Working prototype — tap a tile to explore the redesigned flow</p>
+  </div>
+
+</div>
+
+<style>
+  .dts-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+    margin: 1.75rem 0;
+  }
+
+  @media (max-width: 620px) {
+    .dts-wrap { grid-template-columns: 1fr; }
+  }
+
+  .dts-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Before image — stretches to match prototype height */
+  .dts-media {
+    flex: 1;
+    width: 100%;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dts-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Labels */
+  .dts-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+    text-align: center;
+  }
+  .dts-label--before { color: var(--text-3); }
+  .dts-label--after  { color: var(--coral); }
+
+  .dts-desc {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0;
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* Prototype caption */
+  .dts-hint {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    margin: 0;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* Strip the prototype's own outer margin so it sits flush */
+  .dts-panel--after :global(.dtp-outer) {
+    margin: 0;
+  }
+</style>

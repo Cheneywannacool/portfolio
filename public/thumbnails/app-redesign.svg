@@ -1,0 +1,110 @@
+<svg width="800" height="460" viewBox="0 0 800 460" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="460" fill="#FDF1EE"/>
+
+  <!-- Ambient coral glow -->
+  <ellipse cx="400" cy="230" rx="280" ry="180" fill="rgba(239,70,35,0.06)"/>
+  <ellipse cx="160" cy="100" rx="160" ry="100" fill="rgba(239,70,35,0.07)"/>
+
+  <!-- Label -->
+  <text x="48" y="54" font-family="'Helvetica Neue', sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em" fill="rgba(239,70,35,0.65)">APP REDESIGN</text>
+
+  <!-- Left phone (before)  tilted slightly -->
+  <g transform="translate(148, 40) rotate(-4, 80, 200)">
+    <!-- Phone frame -->
+    <rect x="0" y="0" width="160" height="300" rx="24" fill="rgba(45,59,66,0.12)" stroke="rgba(45,59,66,0.2)" stroke-width="1.5"/>
+    <!-- Screen bg -->
+    <rect x="6" y="6" width="148" height="288" rx="20" fill="white"/>
+    <!-- Old UI: messy nav -->
+    <rect x="6" y="6" width="148" height="40" rx="20" fill="rgba(45,59,66,0.08)"/>
+    <rect x="14" y="18" width="60" height="8" rx="4" fill="rgba(45,59,66,0.2)"/>
+    <rect x="120" y="14" width="24" height="16" rx="4" fill="rgba(45,59,66,0.1)"/>
+    <!-- Old content blocks  cramped -->
+    <rect x="14" y="60" width="132" height="60" rx="6" fill="rgba(45,59,66,0.06)" stroke="rgba(45,59,66,0.08)" stroke-width="1"/>
+    <rect x="22" y="72" width="80" height="8" rx="4" fill="rgba(45,59,66,0.15)"/>
+    <rect x="22" y="86" width="60" height="6" rx="3" fill="rgba(45,59,66,0.08)"/>
+    <rect x="22" y="98" width="70" height="6" rx="3" fill="rgba(45,59,66,0.08)"/>
+    <rect x="14" y="132" width="132" height="50" rx="6" fill="rgba(45,59,66,0.06)" stroke="rgba(45,59,66,0.08)" stroke-width="1"/>
+    <rect x="22" y="142" width="90" height="8" rx="4" fill="rgba(45,59,66,0.12)"/>
+    <rect x="22" y="156" width="60" height="6" rx="3" fill="rgba(45,59,66,0.07)"/>
+    <rect x="14" y="194" width="132" height="50" rx="6" fill="rgba(45,59,66,0.06)" stroke="rgba(45,59,66,0.08)" stroke-width="1"/>
+    <rect x="22" y="204" width="70" height="8" rx="4" fill="rgba(45,59,66,0.12)"/>
+    <rect x="22" y="218" width="85" height="6" rx="3" fill="rgba(45,59,66,0.07)"/>
+    <!-- Before label -->
+    <text x="80" y="275" font-family="'Helvetica Neue', sans-serif" font-size="10" fill="rgba(45,59,66,0.35)" text-anchor="middle" letter-spacing="0.06em">BEFORE</text>
+  </g>
+
+  <!-- Arrow -->
+  <g transform="translate(312, 195)">
+    <circle cx="24" cy="24" r="24" fill="white" stroke="rgba(239,70,35,0.15)" stroke-width="1.5"/>
+    <path d="M14 24 L34 24 M26 16 L34 24 L26 32" stroke="#EF4623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Right phone (after)  clean redesign, front-facing -->
+  <g transform="translate(390, 28) rotate(3, 90, 220)">
+    <!-- Phone frame -->
+    <rect x="0" y="0" width="176" height="328" rx="28" fill="#2D3B42" stroke="rgba(45,59,66,0.4)" stroke-width="1.5"/>
+    <!-- Screen -->
+    <rect x="7" y="7" width="162" height="314" rx="22" fill="#1C2529"/>
+    <!-- Dynamic island -->
+    <rect x="62" y="16" width="38" height="10" rx="5" fill="rgba(0,0,0,0.6)"/>
+    <!-- Header -->
+    <rect x="7" y="7" width="162" height="50" rx="22" fill="rgba(239,70,35,0.08)"/>
+    <text x="26" y="37" font-family="Georgia, serif" font-style="italic" font-size="16" fill="rgba(245,237,232,0.9)">folio.</text>
+    <circle cx="165" cy="33" r="12" fill="rgba(239,70,35,0.2)"/>
+    <!-- Hero image placeholder -->
+    <rect x="14" y="64" width="148" height="88" rx="16" fill="rgba(239,70,35,0.12)"/>
+    <circle cx="88" cy="108" r="20" fill="rgba(239,70,35,0.2)"/>
+    <circle cx="88" cy="108" r="8" fill="#EF4623"/>
+    <!-- Title text -->
+    <rect x="14" y="164" width="110" height="12" rx="6" fill="rgba(245,237,232,0.5)"/>
+    <rect x="14" y="182" width="90" height="8" rx="4" fill="rgba(245,237,232,0.2)"/>
+    <!-- Card row -->
+    <rect x="14" y="202" width="68" height="80" rx="14" fill="rgba(245,237,232,0.05)" stroke="rgba(239,70,35,0.15)" stroke-width="1"/>
+    <rect x="94" y="202" width="68" height="80" rx="14" fill="rgba(239,70,35,0.1)" stroke="rgba(239,70,35,0.2)" stroke-width="1"/>
+    <rect x="22" y="218" width="52" height="32" rx="8" fill="rgba(245,237,232,0.08)"/>
+    <rect x="22" y="256" width="40" height="7" rx="3.5" fill="rgba(245,237,232,0.18)"/>
+    <rect x="22" y="268" width="30" height="5" rx="2.5" fill="rgba(245,237,232,0.1)"/>
+    <rect x="100" y="218" width="52" height="32" rx="8" fill="rgba(239,70,35,0.15)"/>
+    <rect x="100" y="256" width="40" height="7" rx="3.5" fill="rgba(245,237,232,0.18)"/>
+    <rect x="100" y="268" width="30" height="5" rx="2.5" fill="rgba(245,237,232,0.1)"/>
+    <!-- Bottom nav -->
+    <rect x="7" y="285" width="162" height="36" rx="0" fill="rgba(0,0,0,0.3)"/>
+    <rect x="7" y="309" width="162" height="12" rx="0" fill="rgba(0,0,0,0.3)"/>
+    <circle cx="40" cy="303" r="5" fill="rgba(245,237,232,0.3)"/>
+    <circle cx="88" cy="303" r="5" fill="#EF4623"/>
+    <circle cx="136" cy="303" r="5" fill="rgba(245,237,232,0.3)"/>
+    <!-- After label -->
+  </g>
+
+  <!-- After label below right phone -->
+  <text x="477" y="424" font-family="'Helvetica Neue', sans-serif" font-size="10" fill="rgba(239,70,35,0.55)" text-anchor="middle" letter-spacing="0.06em">AFTER</text>
+
+  <!-- Metrics bottom-right -->
+  <g transform="translate(596, 240)">
+    <rect x="0" y="0" width="160" height="100" rx="20" fill="white" style="filter:drop-shadow(0 4px 20px rgba(239,70,35,0.08))"/>
+    <text x="18" y="28" font-family="Georgia, serif" font-style="italic" font-size="28" fill="#EF4623">+68%</text>
+    <text x="18" y="46" font-family="'Helvetica Neue', sans-serif" font-size="10" fill="rgba(45,59,66,0.5)" letter-spacing="0.04em">TASK SUCCESS RATE</text>
+    <rect x="18" y="58" width="124" height="1" fill="rgba(239,70,35,0.1)"/>
+    <text x="18" y="78" font-family="Georgia, serif" font-style="italic" font-size="22" fill="#2D3B42">2.4s</text>
+    <text x="18" y="93" font-family="'Helvetica Neue', sans-serif" font-size="10" fill="rgba(45,59,66,0.5)" letter-spacing="0.04em">AVG TASK TIME</text>
+  </g>
+
+  <!-- Research note top-right -->
+  <g transform="translate(590, 60)">
+    <rect x="0" y="0" width="164" height="152" rx="20" fill="white" style="filter:drop-shadow(0 4px 20px rgba(239,70,35,0.08))"/>
+    <text x="16" y="30" font-family="'Helvetica Neue', sans-serif" font-size="10" font-weight="700" fill="rgba(239,70,35,0.7)" letter-spacing="0.08em">RESEARCH INSIGHTS</text>
+    <rect x="16" y="42" width="132" height="1" fill="rgba(239,70,35,0.1)"/>
+    <rect x="16" y="56" width="8" height="8" rx="2" fill="rgba(239,70,35,0.15)"/>
+    <rect x="30" y="57" width="90" height="6" rx="3" fill="rgba(45,59,66,0.1)"/>
+    <rect x="16" y="72" width="8" height="8" rx="2" fill="rgba(239,70,35,0.15)"/>
+    <rect x="30" y="73" width="100" height="6" rx="3" fill="rgba(45,59,66,0.1)"/>
+    <rect x="16" y="88" width="8" height="8" rx="2" fill="#EF4623"/>
+    <rect x="30" y="89" width="80" height="6" rx="3" fill="rgba(45,59,66,0.14)"/>
+    <rect x="16" y="104" width="8" height="8" rx="2" fill="rgba(239,70,35,0.15)"/>
+    <rect x="30" y="105" width="95" height="6" rx="3" fill="rgba(45,59,66,0.1)"/>
+    <rect x="16" y="120" width="8" height="8" rx="2" fill="rgba(239,70,35,0.15)"/>
+    <rect x="30" y="121" width="75" height="6" rx="3" fill="rgba(45,59,66,0.1)"/>
+    <text x="16" y="146" font-family="'Helvetica Neue', sans-serif" font-size="9" fill="rgba(45,59,66,0.3)" letter-spacing="0.04em">12 user interviews � 3 rounds</text>
+  </g>
+</svg>

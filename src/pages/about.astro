@@ -1,0 +1,617 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getImage } from "astro:assets";
+import { resolveImage } from "../utils/images";
+
+// ── Profile photo ──────────────────────────────────────────────────────────
+// Put your photo in src/assets/images/ and set the filename below.
+// Set to undefined to keep the placeholder circle.
+const PROFILE_PHOTO = "/images/profile.png";
+// Adjust this to shift the crop — "center center" is default.
+// e.g. "center 30%" moves the frame down (shows more of the body).
+// e.g. "center 70%" moves the frame up (shows more of the head).
+const PROFILE_PHOTO_POSITION = "center 60%";
+const _profileData = await resolveImage(PROFILE_PHOTO);
+const profilePhotoSrc = _profileData
+  ? (await getImage({ src: _profileData, width: 400, format: "webp", quality: 90 })).src
+  : undefined;
+
+// ── Journey ────────────────────────────────────────────────────────────────
+// Add  photo: "/images/your-file.jpg"  to show a real image for that stop.
+// Photos must live in src/assets/images/.
+const journeyRaw = [
+  {
+    year: "2025",
+    location: "Seattle, WA",
+    description: "Getting back to Seattle!",
+    photo: "/images/sea.png",
+  },
+  {
+    year: "2023",
+    location: "Bay Area, CA",
+    description: "Moved to Bay Area in Dec, 2023 to get the Cali Vibe there(If there's any).",
+    photo: "/images/bayarea.png",
+  },
+  {
+    year: "2022",
+    location: "Fort Myers, FL",
+    description: "After grad school, I moved to Fort Myers, FL for my first full-time job in US.",
+    photo: "/images/fm.png",
+  },
+  {
+    year: "2021",
+    location: "Bellevue, WA",
+    description: "My trip at Bellevue started from September, 2021. I love this city and its lovely sunset.",
+    photo: "/images/bellevue.png",
+  },
+  {
+    year: "2018",
+    location: "Stockholm, Sweden",
+    description: "I went to exchange at KTH, Stockholm, Sweden. I saw aurora for the first time in my life.",
+    photo: "/images/stockholm.png",
+  },
+  {
+    year: "2016",
+    location: "Hong Kong",
+    description: "My first flight to HKG. I spent 4 years in Hong Kong, and I feel mixed about this city and my memories there.",
+    photo: "/images/hk.png",
+  },
+];
+
+// Resolve + optimise all journey photos at build time
+const journey = await Promise.all(
+  journeyRaw.map(async (stop) => {
+    const imgData = await resolveImage(stop.photo);
+    const photoSrc = imgData
+      ? (await getImage({ src: imgData, width: 1600, format: "webp", quality: 90 })).src
+      : undefined;
+    return { ...stop, photoSrc };
+  })
+);
+---
+
+<BaseLayout
+  title="About — Portfolio"
+  description="Product designer with 6+ years crafting digital products people love."
+>
+
+  <!-- ── Bio header ─────────────────────────────────────────────── -->
+  <div class="bio-outer">
+
+    <!-- Eyebrow -->
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.25rem;">
+      <div style="width:8px;height:8px;border-radius:9999px;background:var(--coral);"></div>
+      <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--coral);">
+        About
+      </span>
+    </div>
+
+    <!-- Title row: h1 + circular photo at equal height -->
+    <div class="bio-title-row">
+      <h1 class="bio-h1">
+        Hi, I'm<br />Jingzhi
+      </h1>
+
+      <div class="bio-photo-circle">
+        {profilePhotoSrc ? (
+          <img src={profilePhotoSrc} alt="Profile photo" style={`width:100%;height:100%;object-fit:cover;object-position:${PROFILE_PHOTO_POSITION};border-radius:9999px;display:block;`} />
+        ) : (
+          <>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>
+            <span class="bio-photo-label">Profile photo</span>
+          </>
+        )}
+      </div>
+    </div>
+
+    <!-- Bio paragraphs -->
+    <div style="display:flex;flex-direction:column;gap:1.25rem;font-size:1rem;font-weight:300;line-height:1.78;color:var(--text-2);margin-top:2.5rem;">
+      <p>
+        I'm a product designer who cares about the full arc — from the messy research that uncovers the real problem, to the final polish that makes an interface feel inevitable.
+      </p>
+      <p>
+        Over the last 5 years I've shipped products used by millions, built design systems adopted across entire organisations, and contributed to business through the lens of design.
+      </p>
+      <p>
+        I started by teaching myself design and was fortunate to gain hands-on experience through various industry projects. I believe great design is the result of collaboration and continuous experimentation. That’s why I prioritize cross-functional teamwork and incorporate A/B testing and other research methodologies to make data-informed decisions.
+      </p>
+      <p>
+      I am now a Senior Product Designer at Hiya where I crafted and implemented spam blocking solutions📱.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ── Now cards ─────────────────────────────────────────────── -->
+  <div class="now-outer">
+
+    <!-- Now Listening -->
+    <div class="now-card">
+      <p class="now-label">Now Listening…</p>
+
+      <div class="now-art">
+        <img src="/now/sodagreen-taipei.jpg" alt="Sodagreen — 20th Anniversary Live at Taipei Arena" class="now-art-img now-art-img--round" />
+      </div>
+
+      <p class="now-item-name">Live at Taipei Arena</p>
+      <p class="now-item-sub">Sodagreen · 20th Anniversary</p>
+
+      <div class="now-icon-wrap">
+        <!-- Headphones -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 18v-6a9 9 0 0118 0v6"/>
+          <path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3v5z"/>
+          <path d="M3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Now Playing -->
+    <div class="now-card now-card-accent">
+      <p class="now-label">Now Playing…</p>
+
+      <div class="now-art">
+        <img src="/now/tft.jpg" alt="Teamfight Tactics" class="now-art-img now-art-img--rounded" />
+      </div>
+
+      <p class="now-item-name">TFT</p>
+      <p class="now-item-sub">Teamfight Tactics · Mobile</p>
+
+      <div class="now-icon-wrap">
+        <!-- Joystick -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 17a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h14a2 2 0 002-2v-2z"/>
+          <path d="M12 15V3M8 7l4-4 4 4"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Now Reading -->
+    <div class="now-card">
+      <p class="now-label">Now Reading…</p>
+
+      <div class="now-art now-art--book">
+        <img src="/now/luanshi.jpg" alt="乱世人心 — 从晚唐到五代" class="now-art-img now-art-img--book" />
+      </div>
+
+      <p class="now-item-name">Those in Times of Turmoil</p>
+      <p class="now-item-sub">From Late Tang to Five Dynasties</p>
+
+      <div class="now-icon-wrap">
+        <!-- Book open -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Journey timeline ──────────────────────────────────────── -->
+  <section class="timeline-section">
+    <div class="timeline-header">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+        <div style="width:8px;height:8px;border-radius:9999px;background:var(--coral);"></div>
+        <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--coral);">
+          Journey
+        </span>
+      </div>
+      <h2 class="timeline-title">Where I've<br/><em>been.</em></h2>
+    </div>
+
+    <div class="timeline-track">
+      {journey.map((stop, i) => (
+        <div class="timeline-stop">
+
+          <!-- Spine connector -->
+          <div class="spine">
+            <div class="spine-dot"></div>
+            {i < journey.length - 1 && <div class="spine-line"></div>}
+          </div>
+
+          <!-- Year + Location -->
+          <div class="stop-year-col">
+            <span class="stop-year">{stop.year}</span>
+            <span class="stop-location">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px;">
+                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              {stop.location}
+            </span>
+          </div>
+
+          <!-- Content -->
+          <div class="stop-content">
+
+            <!-- Image -->
+            <div class="stop-img">
+              {stop.photoSrc ? (
+                <img src={stop.photoSrc} alt={stop.location} style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;" />
+              ) : (
+                <div class="stop-img-inner">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="3"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span class="stop-img-label">Add photo</span>
+                </div>
+              )}
+            </div>
+
+            <!-- Text -->
+            <div class="stop-text">
+              <p class="stop-desc">{stop.description}</p>
+            </div>
+
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  /* ── Bio header layout ──────────────────────────────────────── */
+  .bio-outer {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 3.5rem;
+  }
+
+  /* Title + circle in the same row */
+  .bio-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .bio-h1 {
+    flex: 1;
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    color: var(--text);
+    margin: 0;
+  }
+
+  /*
+   * Circle height ≈ 2 lines × font-size × line-height
+   * clamp(2.75rem,6vw,4.5rem) × 2 × 1.08 ≈ clamp(5.94rem,13vw,9.72rem)
+   * Round to clamp(6rem,13vw,9.75rem) for a clean value.
+   */
+  .bio-photo-circle {
+    width:  clamp(6rem, 13vw, 9.75rem);
+    height: clamp(6rem, 13vw, 9.75rem);
+    flex-shrink: 0;
+    border-radius: 9999px;
+    overflow: hidden;
+    background: var(--bg-alt);
+    border: 1.5px dashed var(--coral-mid);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--coral);
+  }
+
+  /* Only dim the placeholder icon/label, not a real photo */
+  .bio-photo-circle svg,
+  .bio-photo-label {
+    opacity: 0.45;
+  }
+
+  .bio-photo-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Now cards outer ────────────────────────────────────────── */
+  .now-outer {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+
+  @media (max-width: 760px) { .now-outer { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .now-outer { grid-template-columns: 1fr; } }
+
+  /* ── Now card base ───────────────────────────────────────────── */
+  .now-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    padding: 1.625rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+
+  .now-card:hover {
+    box-shadow: 0 12px 36px rgba(239,70,35,0.08);
+    border-color: var(--coral-mid);
+  }
+
+  /* accent variant — same light surface */
+  .now-card-accent { background: var(--card); }
+
+  .now-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin: 0 0 1.5rem;
+    align-self: flex-start;
+    opacity: 0.7;
+  }
+
+  /* ── Art areas ───────────────────────────────────────────────── */
+  .now-art {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Real artwork images */
+  .now-art-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .now-art-img--round {
+    border-radius: 9999px;
+    box-shadow: 0 4px 20px rgba(45,59,66,0.2);
+    animation: spin 18s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .now-art-img--rounded {
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
+
+  /* Book cover — taller aspect */
+  .now-art--book {
+    width: 72px;
+    height: 96px;
+  }
+
+  .now-art-img--book {
+    border-radius: 4px 6px 6px 4px;
+    box-shadow: 3px 4px 14px rgba(0,0,0,0.18), -2px 0 0 rgba(0,0,0,0.08);
+  }
+
+  /* ── Text ────────────────────────────────────────────────────── */
+  .now-item-name {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin: 0 0 0.25rem;
+    line-height: 1.25;
+  }
+
+  .now-item-sub {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-3);
+    margin: 0 0 auto;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Bottom icon ─────────────────────────────────────────────── */
+  .now-icon-wrap {
+    margin-top: 1.5rem;
+    color: var(--coral);
+    opacity: 0.3;
+  }
+
+  /* ── Timeline section ────────────────────────────────────────── */
+  .timeline-section {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .timeline-header {
+    max-width: 42rem;
+    padding-top: 5rem;
+    margin-bottom: 4rem;
+  }
+
+  .timeline-title {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: normal;
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .timeline-title em {
+    font-style: italic;
+  }
+
+  /* Track */
+  .timeline-track {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-stop {
+    display: grid;
+    grid-template-columns: 32px 11rem 1fr;
+    gap: 0 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .timeline-stop {
+      grid-template-columns: 32px 1fr;
+      grid-template-rows: auto auto;
+    }
+    .stop-year-col { grid-column: 2; }
+    .stop-content  { grid-column: 2; }
+  }
+
+  /* Spine */
+  .spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0.5rem;
+  }
+
+  .spine-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    background: var(--coral);
+    border: 2px solid var(--bg);
+    outline: 2px solid var(--coral);
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .spine-line {
+    width: 2px;
+    flex: 1;
+    min-height: 100%;
+    background: linear-gradient(to bottom, var(--coral), var(--coral-dim));
+    margin-top: 0.25rem;
+    opacity: 0.35;
+  }
+
+  /* Year column */
+  .stop-year-col {
+    padding-top: 0.125rem;
+    padding-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .stop-year {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-size: 2.5rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--coral);
+    display: block;
+  }
+
+  .stop-location {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--text-3);
+  }
+
+  /* Content block */
+  .stop-content {
+    padding-bottom: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+  }
+
+  /* Image placeholder */
+  .stop-img {
+    aspect-ratio: 16 / 7;
+    border-radius: 1.25rem;
+    background: var(--bg-alt);
+    border: 1.5px dashed var(--coral-mid);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .stop-img-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--coral);
+    opacity: 0.3;
+  }
+
+  .stop-img-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Text */
+  .stop-role {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .stop-company {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .stop-desc {
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-2);
+    margin: 0;
+    max-width: 44rem;
+  }
+</style>

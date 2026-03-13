@@ -1,0 +1,107 @@
+---
+/**
+ * The Big Reveal — Final high-fidelity solution, shown early.
+ * Designers shouldn't make readers scroll to the bottom to see the work.
+ */
+import PhoneGallery from "./PhoneGallery.astro";
+
+interface GalleryItem { src: string; label: string; }
+
+interface Props {
+  reveal?: string;
+  revealCaption?: string;
+  revealGallery?: GalleryItem[];
+  title: string;
+}
+
+const { reveal, revealCaption, revealGallery, title } = Astro.props;
+if (!reveal && !revealGallery?.length) return;
+---
+
+<section style="
+  margin-bottom: 3.5rem;
+  padding: 2rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  position: relative;
+  overflow: hidden;
+">
+  <!-- Ambient coral glow behind -->
+  <div style="
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(239,70,35,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  "></div>
+
+  <!-- Section label -->
+  <div style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    position: relative;
+  ">
+    <div style="display:flex;align-items:center;gap:0.625rem;">
+      <span style="
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        background: var(--coral);
+        box-shadow: 0 0 0 4px var(--coral-dim);
+      "></span>
+      <span style="
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--coral);
+      ">The Solution</span>
+    </div>
+    <p style="
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--text-3);
+      font-style: italic;
+    ">Final high-fidelity design</p>
+  </div>
+
+  <!-- Gallery (phone screens) or single image -->
+  <div style="position:relative;">
+    {revealGallery?.length ? (
+      <PhoneGallery items={revealGallery} />
+    ) : (
+      <div style="
+        border-radius: 1.25rem;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: 0 24px 64px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+      ">
+        <img
+          src={reveal}
+          alt={`${title} — final solution`}
+          loading="lazy"
+          decoding="async"
+          style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover;"
+        />
+      </div>
+    )}
+  </div>
+
+  <!-- Caption -->
+  {revealCaption && (
+    <p style="
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--text-3);
+      text-align: center;
+      font-style: italic;
+      position: relative;
+    ">{revealCaption}</p>
+  )}
+</section>

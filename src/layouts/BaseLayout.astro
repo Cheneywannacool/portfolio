@@ -1,0 +1,79 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title = "Portfolio",
+  description = "Product designer crafting thoughtful digital experiences — from research to high-fidelity.",
+  ogImage,
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL(Astro.request.url).origin;
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- No-flash theme init: runs before paint -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (stored === "dark" || (!stored && prefersDark)) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+
+  <!--
+    body background/color come entirely from CSS custom properties
+    defined in global.css (:root and .dark) — no inline style here
+    so the dark class on <html> correctly controls both.
+  -->
+  <body>
+    <!-- Ambient coral blur orbs -->
+    <div aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+      <div class="coral-orb" style="width:520px;height:520px;top:-120px;right:-100px;"></div>
+      <div class="coral-orb" style="width:440px;height:440px;bottom:5%;left:-140px;"></div>
+      <div class="coral-orb" style="width:280px;height:280px;top:48%;left:50%;transform:translateX(-50%);opacity:0.45;"></div>
+    </div>
+
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;">
+      <Header />
+      <main style="flex:1;">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,541 @@
+---
+import { getCollection } from "astro:content";
+import { getImage } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.tsx";
+import { resolveImage } from "../../utils/images";
+
+const allProjects = await getCollection("projects", ({ data }) => !data.draft);
+const sortedRaw = allProjects.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const sorted = await Promise.all(
+  sortedRaw.map(async (p) => {
+    const imgData = await resolveImage(p.data.cover);
+    const coverSrc = imgData
+      ? (await getImage({ src: imgData, width: 1800, format: "webp", quality: 90 })).src
+      : p.data.cover;
+    return { ...p, coverSrc };
+  })
+);
+
+// ── More ─────────────────────────────────────────────────────────────────
+const moreRaw = [
+  {
+    title: "Wave Browser Install Flow Optimization",
+    type: "2024-2025",
+    description: "Revise the existing Wave Browser install flow and creating account flow for higher conversion rate.",
+    tags: ["Desktop", "Onboarding"],
+    link: "https://wavebrowser.co/features",
+    src: "/images/install.png",
+  },
+  {
+    title: "Check Your Heart Rate Now App Design",
+    type: "2024-2025",
+    description: "Design a heart rate monitor app to expand health app portfolios.",
+    tags: ["0-1", "Mobile"],
+    link: "https://apps.apple.com/us/app/check-heart-rate-now/id6467655857",
+    src: "/images/hrm.png",
+  },
+  {
+    title: "Design Better Transportation Planning Public Engagement Process",
+    type: "2022",
+    description: "Explore how to better engage the public in transportation planning concept using immersive technologies.",
+    tags: ["0-1", "AR"],
+    link: "https://www.youtube.com/watch?v=6NEmuK0UwCw",
+    src: "/images/ar.png",
+  },
+  {
+    title: "After Flight Delays",
+    type: "2021",
+    description: "Conduct qualitative and quantitative research on 300+ users to inform later delay protection features.",
+    tags: ["Qualitative Research"],
+    link: "https://www.variflight.com/en/insights/global-on-time-performance-reports",
+    src: "/images/flight.png",
+  },
+  {
+    title: "Mint Reading New Membership System",
+    type: "2020",
+    description: "Customized membership system to improve membership conversion rate and retention rate.",
+    tags: ["Monetization"],
+    link: "",
+    src: "/images/mint.png",
+  },
+  {
+    title: "Visualize Lateral Flexion For Cricket Injuries Prevention",
+    type: "2019",
+    description: "Design to inform cricket coaching – reducing injury, enhancing performance and extending playing careers.",
+    tags: ["IoT"],
+    link: "https://youtube.com/watch?v=n6_1RVL1cmw",
+    src: "",
+  },
+];
+
+function getYouTubeId(url: string): string | null {
+  const match = url.match(/[?&]v=([^&]+)/) ?? url.match(/youtu\.be\/([^?]+)/);
+  return match ? match[1] : null;
+}
+
+const more = await Promise.all(
+  moreRaw.map(async (m) => {
+    // Only embed YouTube when there's no local image — static src always takes priority
+    const ytId = !m.src && m.link ? getYouTubeId(m.link) : null;
+    if (ytId) return { ...m, thumbSrc: undefined, embedSrc: `https://www.youtube.com/embed/${ytId}?rel=0` };
+    if (m.src.startsWith("http")) return { ...m, thumbSrc: m.src, embedSrc: undefined };
+    const imgData = await resolveImage(m.src);
+    const thumbSrc = imgData
+      ? (await getImage({ src: imgData, width: 800, format: "webp", quality: 85 })).src
+      : undefined;
+    return { ...m, thumbSrc, embedSrc: undefined };
+  })
+);
+---
+
+<BaseLayout
+  title="Work — Portfolio"
+  description="Design case studies — product design, design systems, brand identity."
+>
+  <div style="max-width:72rem;margin:0 auto;padding:5rem 1.5rem 7rem;">
+    <header style="margin-bottom:3.5rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+        <div style="width:8px;height:8px;border-radius:9999px;background:var(--coral);"></div>
+        <span style="
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--coral);
+        ">Work</span>
+      </div>
+
+      <h1 style="
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
+        font-size: clamp(3rem, 7vw, 5.5rem);
+        font-weight: 400;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        color: var(--text);
+        margin-bottom: 1.25rem;
+      ">
+        Case studies
+      </h1>
+
+      <p style="
+        max-width: 36rem;
+        font-size: 1.05rem;
+        font-weight: 300;
+        line-height: 1.72;
+        color: var(--text-2);
+      ">
+        Each project below walks through the problem, process, and outcome.
+        I care as much about how decisions were made as what was shipped.
+      </p>
+    </header>
+
+    <div style="display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr));">
+      {
+        sorted.map((project, i) => (
+          <ProjectCard
+            client:visible
+            title={project.data.title}
+            description={project.data.description}
+            tags={project.data.tags}
+            slug={project.slug}
+            featured={project.data.featured}
+            cover={project.coverSrc}
+            url={project.data.url}
+            repo={project.data.repo}
+            index={i}
+          />
+        ))
+      }
+    </div>
+
+    <!-- ── More — swipe deck ─────────────────────────────────── -->
+    <div class="more-section">
+      <div class="more-layout">
+
+        <!-- Left: label + description + nav -->
+        <div class="more-left">
+          <h2 class="more-heading">More</h2>
+          <p class="more-sub">A few other projects worth a look — early explorations, research work, and side builds.</p>
+          <div class="more-nav">
+            <span class="more-counter"><span id="moreIdx">1</span> / {more.length}</span>
+            <button class="more-btn" id="morePrev" aria-label="Previous">←</button>
+            <button class="more-btn" id="moreNext" aria-label="Next">→</button>
+          </div>
+          <p class="more-hint">or drag the card</p>
+        </div>
+
+        <!-- Right: deck -->
+        <div class="more-deck-wrap">
+          <div class="more-deck" id="moreDeck">
+          {more.map((item, i) => (
+            <article
+              class="more-card"
+              data-index={i}
+              style={`z-index:${more.length - i};`}
+            >
+              <div class={item.embedSrc ? "more-thumb more-thumb--embed" : "more-thumb"}>
+                {item.embedSrc ? (
+                  <iframe
+                    src={item.embedSrc}
+                    class="more-thumb-iframe"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"
+                    title={item.title}
+                  />
+                ) : item.thumbSrc ? (
+                  <img src={item.thumbSrc} alt={item.title} class="more-thumb-img" />
+                ) : (
+                  <div class="more-thumb-placeholder">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="3" y="3" width="18" height="18" rx="3"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span>Add image</span>
+                  </div>
+                )}
+              </div>
+              <div class="more-body">
+                <div class="more-top">
+                  <span class="more-type">{item.type}</span>
+                  {item.link && (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" class="more-arrow">↗</a>
+                  )}
+                </div>
+                <h3 class="more-title">{item.title}</h3>
+                <p class="more-desc">{item.description}</p>
+                <div class="more-tags">
+                  {item.tags.map(t => <span class="more-tag">{t}</span>)}
+                </div>
+              </div>
+            </article>
+          ))}
+          </div>
+        </div><!-- /more-deck-wrap -->
+
+      </div><!-- /more-layout -->
+    </div><!-- /more-section -->
+  </div>
+</BaseLayout>
+
+<script>
+  const deck    = document.getElementById("moreDeck")!;
+  const counter = document.getElementById("moreIdx")!;
+
+  // Keep a live ordered array — front = index 0
+  const order: HTMLElement[] = Array.from(deck.querySelectorAll<HTMLElement>(".more-card"));
+  const total = order.length;
+
+  function applyStack(instant = false) {
+    order.forEach((card, i) => {
+      const depth = Math.min(i, 3);
+      const scale   = 1 - depth * 0.045;
+      const yOff    = depth * 16;
+      const opacity = i > 3 ? 0 : 1 - depth * 0.12;
+      card.style.transition    = instant ? "none" : "transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s";
+      card.style.transform     = i === 0 ? "translateX(0) rotate(0deg) scale(1)" : `translateY(${yOff}px) scale(${scale})`;
+      card.style.opacity       = String(opacity);
+      card.style.zIndex        = String(total - i);
+      card.style.pointerEvents = i === 0 ? "auto" : "none";
+    });
+    // counter uses original data-index on the front card
+    counter.textContent = String(Number(order[0].dataset.index ?? 0) + 1);
+  }
+
+  function sendToBack(dir: "left" | "right") {
+    const card = order[0];
+    // 1. fly out
+    card.style.transition = "transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.3s";
+    card.style.transform  = dir === "left"
+      ? "translateX(-130%) rotate(-14deg) scale(0.88)"
+      : "translateX(130%) rotate(14deg) scale(0.88)";
+    card.style.opacity = "0";
+
+    // 2. after exit: move DOM node to back, reset instantly, re-stack
+    setTimeout(() => {
+      deck.appendChild(card);          // moves to DOM end = visual back
+      order.push(order.shift()!);      // rotate order array
+      card.style.transition = "none";
+      card.style.transform  = "translateY(48px) scale(0.85)";
+      card.style.opacity    = "0";
+      // force repaint, then animate stack
+      requestAnimationFrame(() => requestAnimationFrame(() => applyStack()));
+    }, 380);
+  }
+
+  function bringToFront() {
+    const card = order[order.length - 1];
+    // move last card to front in DOM and array
+    deck.prepend(card);
+    order.unshift(order.pop()!);
+    card.style.transition = "none";
+    card.style.transform  = "translateX(-60%) rotate(-6deg) scale(0.92)";
+    card.style.opacity    = "0.5";
+    requestAnimationFrame(() => requestAnimationFrame(() => applyStack()));
+  }
+
+  document.getElementById("moreNext")!.addEventListener("click", () => sendToBack("left"));
+  document.getElementById("morePrev")!.addEventListener("click", bringToFront);
+
+  // Drag / swipe
+  let startX = 0, isDragging = false;
+
+  function onStart(x: number) { startX = x; isDragging = true; }
+  function onMove(x: number) {
+    if (!isDragging) return;
+    const card = order[0];
+    const dx = x - startX;
+    card.style.transition = "none";
+    card.style.transform = `translateX(${dx}px) rotate(${dx * 0.055}deg)`;
+  }
+  function onEnd(x: number) {
+    if (!isDragging) return;
+    isDragging = false;
+    const dx = x - startX;
+    if (Math.abs(dx) > 80) sendToBack(dx < 0 ? "left" : "right");
+    else applyStack();
+  }
+
+  deck.addEventListener("mousedown",  e => onStart(e.clientX));
+  window.addEventListener("mousemove", e => { if (isDragging) onMove(e.clientX); });
+  window.addEventListener("mouseup",   e => onEnd(e.clientX));
+  deck.addEventListener("touchstart", e => onStart(e.touches[0].clientX), { passive: true });
+  deck.addEventListener("touchmove",  e => onMove(e.touches[0].clientX),  { passive: true });
+  deck.addEventListener("touchend",   e => onEnd(e.changedTouches[0].clientX));
+
+  applyStack(true);
+
+  // Sync deck height to the top card's actual rendered height
+  function syncDeckHeight() {
+    const h = order[0].getBoundingClientRect().height;
+    if (h > 0) deck.style.minHeight = h + "px";
+  }
+  // Run after images load
+  window.addEventListener("load", syncDeckHeight);
+  setTimeout(syncDeckHeight, 300);
+</script>
+
+<style>
+  .more-section {
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border);
+    padding-bottom: 4rem;
+  }
+
+  /* Left + right split */
+  .more-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  @media (max-width: 760px) {
+    .more-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  /* Left panel */
+  .more-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .more-heading {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .more-sub {
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-2);
+    margin: 0;
+    max-width: 32ch;
+  }
+
+  .more-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .more-counter {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-3);
+    margin-right: 0.25rem;
+  }
+  .more-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .more-btn:hover { border-color: var(--coral); color: var(--coral); }
+
+  .more-hint {
+    font-size: 0.7rem;
+    color: var(--text-3);
+    margin: 0;
+    letter-spacing: 0.05em;
+    font-style: italic;
+  }
+
+  /* Right: deck */
+  .more-deck-wrap {
+    width: 100%;
+  }
+
+  .more-deck {
+    position: relative;
+    width: 100%;
+    min-height: 460px;
+    margin-bottom: 64px;
+    cursor: grab;
+    user-select: none;
+  }
+  .more-deck:active { cursor: grabbing; }
+
+  .more-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    will-change: transform;
+    transform-origin: center bottom;
+  }
+
+  .more-thumb {
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  /* Iframe needs a fixed-ratio container so it has a real height */
+  .more-thumb--embed {
+    position: relative;
+    aspect-ratio: 16/9;
+  }
+  .more-thumb-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .more-thumb-iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+  .more-thumb-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    color: var(--coral);
+    opacity: 0.35;
+    margin: 0.75rem;
+    border: 1.5px dashed var(--coral-mid);
+    border-radius: 0.75rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .more-body {
+    padding: 1.125rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.35rem;
+  }
+
+  .more-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .more-type {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+  .more-arrow {
+    font-size: 1rem;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+  .more-arrow:hover { color: var(--coral); }
+
+  .more-title {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--text);
+    margin: 0;
+  }
+  .more-desc {
+    font-size: 0.78rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-2);
+    flex: 1;
+    margin: 0;
+  }
+  .more-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.25rem;
+  }
+  .more-tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--tag-text);
+    background: var(--tag-bg);
+    padding: 0.18rem 0.55rem;
+    border-radius: 9999px;
+  }
+</style>

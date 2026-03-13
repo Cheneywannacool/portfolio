@@ -1,0 +1,87 @@
+---
+/**
+ * ImagePlaceholder — drop this inside any MDX section or component
+ * to mark where a screenshot / mockup will go.
+ * Replace `src` with the real image path when ready.
+ */
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface Props {
+  label?: string;
+  aspectRatio?: string; // e.g. "16/9", "4/3", "3/2"
+  src?: string;
+  alt?: string;
+}
+
+const {
+  label = "Add screenshot",
+  aspectRatio = "16/9",
+  src,
+  alt,
+} = Astro.props;
+
+const imageData = await resolveImage(src);
+---
+
+<figure class="img-placeholder-wrap" style={imageData ? '' : `aspect-ratio:${aspectRatio};`}>
+  {imageData ? (
+    <Image
+      src={imageData}
+      alt={alt ?? label}
+      widths={[800, 1600, 2800]}
+      sizes="(max-width: 900px) 100vw, 830px"
+      format="webp"
+      quality={90}
+      style="width:100%;height:auto;display:block;"
+    />
+  ) : src ? (
+    <img src={src} alt={alt ?? label} style="width:100%;height:100%;object-fit:cover;display:block;" />
+  ) : (
+    <div class="img-placeholder-inner">
+      <!-- Camera / image icon -->
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <span class="img-placeholder-label">{label}</span>
+    </div>
+  )}
+</figure>
+
+
+<style>
+  .img-placeholder-wrap {
+    display: block;
+    width: 100%;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1.5px dashed var(--coral-mid);
+    background: var(--bg-alt);
+    margin: 1.75rem 0;
+    position: relative;
+  }
+
+  .img-placeholder-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    color: var(--coral);
+    opacity: 0.45;
+  }
+
+  .img-placeholder-label {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+</style>

@@ -1,0 +1,206 @@
+---
+/**
+ * Deep Dives wrapper
+ *
+ * Typography hierarchy (3 clear levels):
+ *  L1 — "Deep dives" section title:  Instrument Serif italic 1.65rem  (expressive, editorial)
+ *  L2 — MDX h2 sub-section titles:  Manrope 600 0.82rem uppercase     (functional, readable)
+ *  L3 — MDX h3 sub-labels:          Manrope 700 0.65rem uppercase coral (utility labels)
+ */
+---
+
+<section style="margin-bottom:3.5rem;">
+
+  <!-- L1 — Section title (editorial / expressive) -->
+  <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:2rem;">
+    <div style="width:2px;height:1.25rem;border-radius:9999px;background:var(--coral);flex-shrink:0;"></div>
+    <h2 style="
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-size: 1.65rem;
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin: 0;
+    ">Deep dives</h2>
+  </div>
+
+  <div class="deep-prose">
+    <slot />
+  </div>
+</section>
+
+<style>
+  /* ── Base prose ─────────────────────────────────────────────── */
+  .deep-prose {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;   /* 15px — slightly smaller than hero body */
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--text-2);
+  }
+
+  /*
+   * L2 — MDX h2: Manrope, sentence-case subheading with a coral left rule.
+   * No background — the left border and weight carry the hierarchy.
+   */
+  .deep-prose :global(h2) {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--text);
+    margin-top: 3rem;
+    margin-bottom: 0.875rem;
+    line-height: 1.35;
+  }
+
+  /*
+   * L3 — MDX h3: coral uppercase label, larger than before.
+   * Used for named sub-topics within a deep dive.
+   */
+  .deep-prose :global(h3) {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .deep-prose :global(p) {
+    color: var(--text-2);
+    margin-bottom: 1rem;
+  }
+
+  /*
+   * Trade-off / decision callout
+   * Deliberately different from the h2 strip:
+   *  - h2 strip → full-width, LEFT coral border, peach bg, ALL-CAPS label
+   *  - blockquote → card with TOP coral accent bar + "→ Decision" badge, Manrope regular
+   */
+  .deep-prose :global(blockquote) {
+    position: relative;
+    margin: 1.75rem 0;
+    padding: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 2.5px solid var(--coral);
+    border-radius: 1.25rem;
+    font-style: normal;
+    overflow: hidden;
+  }
+
+  /* "→ Decision" badge row */
+  .deep-prose :global(blockquote)::before {
+    content: "→  Decision";
+    display: block;
+    padding: 0.55rem 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--coral);
+    background: var(--coral-dim);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .deep-prose :global(blockquote p) {
+    margin: 0;
+    padding: 1.125rem 1.375rem;
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.72;
+    color: var(--text);
+  }
+
+  /* Code */
+  .deep-prose :global(pre) {
+    background: #1C2529;
+    color: #F5EDE8;
+    border-radius: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-size: 0.825rem;
+    line-height: 1.7;
+    margin: 1.5rem 0;
+  }
+
+  .deep-prose :global(code:not(pre code)) {
+    font-family: var(--font-mono);
+    font-size: 0.83em;
+    background: var(--tag-bg);
+    color: var(--coral);
+    padding: 0.15em 0.4em;
+    border-radius: 5px;
+  }
+
+  /* Lists */
+  .deep-prose :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+  }
+
+  .deep-prose :global(ul li) {
+    padding-left: 1.125rem;
+    position: relative;
+    margin-bottom: 0.4rem;
+  }
+
+  .deep-prose :global(ul li::before) {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 4px;
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--coral);
+    opacity: 0.55;
+  }
+
+  .deep-prose :global(ol) {
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .deep-prose :global(ol li) { margin-bottom: 0.4rem; }
+
+  .deep-prose :global(strong) { font-weight: 700; color: var(--text); }
+  .deep-prose :global(em)     { font-style: italic; }
+
+  .deep-prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  .deep-prose :global(img) {
+    width: 100%;
+    border-radius: 1.25rem;
+    border: 1px solid var(--border);
+    margin: 1.75rem 0;
+    display: block;
+  }
+
+  .deep-prose :global(a) {
+    color: var(--coral);
+    text-decoration: underline;
+    text-decoration-color: var(--coral-mid);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.18s;
+  }
+
+  .deep-prose :global(a:hover) {
+    text-decoration-color: var(--coral);
+  }
+</style>

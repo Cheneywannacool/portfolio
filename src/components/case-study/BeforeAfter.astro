@@ -1,0 +1,235 @@
+---
+/**
+ * BeforeAfter — side-by-side comparison panel.
+ * "Before" always shows an image (or placeholder).
+ * "After" shows an image OR an auto-playing looped video when videoSrc is set.
+ *
+ * Usage in MDX:
+ *   <BeforeAfter
+ *     beforeLabel="Before"
+ *     beforeDesc="Immediate paywall — no prior engagement"
+ *     beforeSrc="/images/before.png"
+ *     afterLabel="After"
+ *     afterDesc="LPB flow — upgrade pitched at peak motivation"
+ *     afterVideoSrc="/videos/lpb-demo.mp4"
+ *     afterVideoPoster="/images/lpb-poster.png"
+ *   />
+ *
+ * Image export size:  1400 × 1000 px  (7/5 ratio, same as ImagePlaceholder)
+ * Video spec:         MP4 (H.264), 1400 × 1000 px, no audio needed
+ */
+
+interface Props {
+  /** Label shown above the before panel */
+  beforeLabel?: string;
+  /** Short description below before label */
+  beforeDesc?: string;
+  /** Path to before image, e.g. "/images/before.png" */
+  beforeSrc?: string;
+  beforeAlt?: string;
+
+  /** Label shown above the after panel */
+  afterLabel?: string;
+  /** Short description below after label */
+  afterDesc?: string;
+  /** Path to after image — used if no video provided */
+  afterSrc?: string;
+  afterAlt?: string;
+  /** Path to after video (MP4). When set, renders a <video> instead of <img> */
+  afterVideoSrc?: string;
+  /** Poster frame shown before the video plays */
+  afterVideoPoster?: string;
+
+  /** Aspect ratio for both panels. Default "7/5" matches ImagePlaceholder */
+  aspectRatio?: string;
+  /**
+   * When true, the after video/image is displayed in portrait phone size
+   * (393×852) centred inside the landscape container — use for screen recordings.
+   */
+  afterPortrait?: boolean;
+}
+
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+const {
+  beforeLabel = "Before",
+  beforeDesc,
+  beforeSrc,
+  beforeAlt,
+  afterLabel = "After",
+  afterDesc,
+  afterSrc,
+  afterAlt,
+  afterVideoSrc,
+  afterVideoPoster,
+  aspectRatio = "7/5",
+  afterPortrait = false,
+} = Astro.props;
+
+const beforeImageData = await resolveImage(beforeSrc);
+const afterImageData = await resolveImage(afterSrc);
+---
+
+<div class="ba-wrap">
+
+  <!-- ── Before ───────────────────────── -->
+  <div class="ba-panel">
+    <div class="ba-media" style={`aspect-ratio:${afterPortrait ? '393/426' : aspectRatio};`}>
+      {beforeImageData ? (
+        <Image src={beforeImageData} alt={beforeAlt ?? beforeLabel} widths={[600, 1200, 2000]} sizes="(max-width: 600px) 100vw, 50vw" format="webp" quality={90} class="ba-fill" />
+      ) : beforeSrc ? (
+        <img src={beforeSrc} alt={beforeAlt ?? beforeLabel} class="ba-fill" />
+      ) : (
+        <div class="ba-placeholder">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span class="ba-placeholder-label">{afterPortrait ? '393 × 852 px' : 'Add image'}</span>
+        </div>
+      )}
+    </div>
+    <p class="ba-caption ba-caption--before">← {beforeLabel}</p>
+    {beforeDesc && <p class="ba-desc">{beforeDesc}</p>}
+  </div>
+
+  <!-- ── After ────────────────────────── -->
+  <div class="ba-panel">
+    <div class="ba-media" style={`aspect-ratio:${afterPortrait ? '393/426' : aspectRatio};`}>
+      {afterVideoSrc ? (
+        <video
+          src={afterVideoSrc}
+          poster={afterVideoPoster}
+          autoplay
+          loop
+          muted
+          playsinline
+          class="ba-fill"
+          aria-label={afterAlt ?? afterLabel}
+        />
+      ) : afterImageData ? (
+        <Image src={afterImageData} alt={afterAlt ?? afterLabel} widths={[600, 1200, 2000]} sizes="(max-width: 600px) 100vw, 50vw" format="webp" quality={90} class="ba-fill" />
+      ) : afterSrc ? (
+        <img src={afterSrc} alt={afterAlt ?? afterLabel} class="ba-fill" />
+      ) : (
+        <div class="ba-placeholder ba-placeholder--video">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+          <span class="ba-placeholder-label">Add image or video</span>
+          <span class="ba-placeholder-hint">{afterPortrait ? 'Portrait · 393 × 852 px' : '1400 × 1000 px'}</span>
+        </div>
+      )}
+    </div>
+    <p class="ba-caption ba-caption--after">{afterLabel} →</p>
+    {afterDesc && <p class="ba-desc">{afterDesc}</p>}
+  </div>
+
+</div>
+
+<style>
+  .ba-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.75rem 0;
+  }
+
+  @media (max-width: 560px) {
+    .ba-wrap { grid-template-columns: 1fr; }
+  }
+
+  .ba-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Small caption below each panel */
+  .ba-caption {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+    text-align: center;
+  }
+
+  .ba-caption--before {
+    color: var(--text-3);
+  }
+
+  .ba-caption--after {
+    color: var(--coral);
+  }
+
+  .ba-desc {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0 0 0.625rem;
+    font-style: italic;
+  }
+
+  /* Media frame */
+  .ba-media {
+    position: relative;
+    width: 100%;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
+  }
+
+  /* Fills the container — images cover, videos contain to avoid cropping */
+  .ba-fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  video.ba-fill {
+    object-fit: contain;
+    background: #000;
+  }
+
+  /* Placeholder */
+  .ba-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    color: var(--coral);
+    opacity: 0.4;
+    margin: 0.75rem;
+    border: 1.5px dashed var(--coral-mid);
+    border-radius: 0.75rem;
+  }
+
+  .ba-placeholder-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ba-placeholder-hint {
+    font-size: 0.55rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    opacity: 0.65;
+  }
+</style>

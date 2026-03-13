@@ -1,0 +1,90 @@
+---
+/**
+ * Reflection — "What would I do differently?"
+ * A candid retrospective note — signals design maturity.
+ */
+
+interface Props {
+  reflection?: string;
+}
+
+const { reflection } = Astro.props;
+if (!reflection) return;
+---
+
+<section style="margin-bottom:3.5rem;">
+  <!-- Section title — Instrument Serif italic (L1 editorial heading) -->
+  <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:1.5rem;">
+    <div style="width:2px;height:1.25rem;border-radius:9999px;background:var(--coral);flex-shrink:0;"></div>
+    <h2 style="
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-size: 1.65rem;
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin: 0;
+    ">Reflection</h2>
+  </div>
+
+  <!-- Quote card — Manrope body for readability -->
+  <blockquote style="
+    position: relative;
+    padding: 0;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--coral);
+    border-radius: 0 1.5rem 1.5rem 0;
+    margin: 0 0 2rem;
+    overflow: hidden;
+  ">
+    <!-- "Looking back" badge -->
+    <div style="
+      padding: 0.55rem 1.5rem;
+      background: var(--coral-dim);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    ">
+      <span style="
+        font-family: var(--font-sans);
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--coral);
+      ">Looking back</span>
+    </div>
+
+    <!-- Quote body — Manrope for legibility -->
+    <div style="padding: 1.5rem 1.75rem; position: relative;">
+      <!-- Decorative large open-quote (behind the text) -->
+      <span aria-hidden="true" style="
+        position: absolute;
+        top: 0.5rem;
+        right: 1.25rem;
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 6rem;
+        line-height: 1;
+        color: var(--coral);
+        opacity: 0.07;
+        user-select: none;
+        pointer-events: none;
+      ">&rdquo;</span>
+
+      <p style="
+        font-family: var(--font-sans);
+        font-size: 0.9375rem;
+        font-weight: 400;
+        line-height: 1.78;
+        color: var(--text);
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        max-width: 62ch;
+      ">{reflection}</p>
+    </div>
+  </blockquote>
+
+</section>

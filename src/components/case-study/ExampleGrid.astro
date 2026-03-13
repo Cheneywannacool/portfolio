@@ -1,0 +1,162 @@
+---
+/**
+ * ExampleGrid — 3 horizontal cards, each with a title, description,
+ * and an image placeholder (or real image when src is provided).
+ * Use inside MDX to showcase multiple design examples side-by-side.
+ */
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface Example {
+  title: string;
+  description: string;
+  /** Path to a real image once available, e.g. "/images/social-proof.png" */
+  src?: string;
+  /** Alt text for the image */
+  alt?: string;
+  /** Aspect ratio for the image area, defaults to "7/5" */
+  aspectRatio?: string;
+}
+
+interface Props {
+  items: Example[];
+}
+
+const { items } = Astro.props;
+
+// Resolve all images in parallel at build time
+const resolvedItems = await Promise.all(
+  items.map(async (item) => ({
+    ...item,
+    imageData: await resolveImage(item.src),
+  }))
+);
+---
+
+<div class="eg-grid">
+  {resolvedItems.map((item) => (
+    <div class="eg-card">
+      <!-- Image / placeholder -->
+      <div class="eg-img-wrap" style={`aspect-ratio:${item.aspectRatio ?? "7/5"};`}>
+        {item.imageData ? (
+          <Image
+            src={item.imageData}
+            alt={item.alt ?? item.title}
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw"
+            format="webp"
+            quality={90}
+            class="eg-img"
+          />
+        ) : item.src ? (
+          <img src={item.src} alt={item.alt ?? item.title} class="eg-img" />
+        ) : (
+          <div class="eg-placeholder">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span class="eg-placeholder-label">Add image</span>
+          </div>
+        )}
+      </div>
+
+      <!-- Text below image -->
+      <div class="eg-text">
+        <p class="eg-title">{item.title}</p>
+        {item.description && <p class="eg-desc">{item.description}</p>}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .eg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.75rem 0;
+  }
+
+  @media (max-width: 600px) {
+    .eg-grid { grid-template-columns: 1fr; }
+  }
+
+  .eg-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+    min-width: 0;
+  }
+
+  /* Image area */
+  .eg-img-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .eg-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--coral);
+    opacity: 0.4;
+    border: 1.5px dashed var(--coral-mid);
+    border-radius: 0;
+    margin: 0.625rem;
+    border-radius: 0.625rem;
+  }
+
+  .eg-placeholder-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Text area */
+  .eg-text {
+    padding: 0.75rem 1rem 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .eg-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .eg-desc {
+    font-size: 0.72rem;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0;
+  }
+</style>

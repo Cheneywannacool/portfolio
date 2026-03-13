@@ -1,0 +1,181 @@
+---
+title: "Calorie Tracking App Onboarding Optimization"
+description: "A data-driven onboarding redesign that reversed user drop-offs and increased core conversion rates by 23%."
+date: 2025-08-20
+tags: ["A/B Testing", "Conversion Optimization"]
+cover: "/images/Arc7.png"
+featured: true
+
+problem: "Users were dropping off during the onboarding of the Arc7 wellness app. We had a low completion rate (58.7%) against a benchmark of 65-70%, and an underperforming start trial rate (6.5%) against a 7.5% benchmark."
+result: "+23%"
+resultLabel: "Increase in Start Trial Rate"
+resultContext: "up from 6.5% pre-launch"
+
+role: "Lead Product Designer"
+timeline: "Q2–Q3 2024"
+team:
+  - { role: "PM", name: "1 Product Manager"}
+  - { role: "Engineering", name: "1 iOS Engineer"}
+  - { role: "Data", name: "1 Data Analyst" }
+
+holder: "Company"
+holderValue: "Eightpoint"
+
+revealCaption: "The final 13-screen onboarding flow — informed by usability research and strategic A/B testings."
+revealGallery:
+  - { src: "/images/onboarding/OB_01.png", label: "Welcome" }
+  - { src: "/images/onboarding/OB_02.png", label: "Social Proof" }
+  - { src: "/images/onboarding/OB_03.png", label: "Biological Sex" }
+  - { src: "/images/onboarding/OB_04.png", label: "Age" }
+  - { src: "/images/onboarding/OB_05.png", label: "Height" }
+  - { src: "/images/onboarding/OB_06.png", label: "Goals" }
+  - { src: "/images/onboarding/OB_07.png", label: "Current Weight" }
+  - { src: "/images/onboarding/OB_08.png", label: "Ideal Weight" }
+  - { src: "/images/onboarding/OB_09.png", label: "Goal Timeline" }
+  - { src: "/images/onboarding/OB_10.png", label: "Activity Level" }
+  - { src: "/images/onboarding/OB_11.png", label: "Your Name" }
+  - { src: "/images/onboarding/OB_12.png", label: "You're All Set!" }
+  - { src: "/images/onboarding/OB_13.png", label: "Premium Pitch" }
+
+metrics:
+  - { value: "+23%", label: "Start Trial Rate", delta: "↑ from 6.5% pre-launch" }
+  - { value: "+14", label: "Onboarding Completion Rate", delta: "↑ from 58%" }
+  - { value: "+20%", label: "Start Paid Rate", delta: "in P1" }
+  - { value: "8%", label: "Core Conversion Rate", delta: "14% above benchmark" }
+
+reflection: "I learned that reducing steps isn't always a panacea. Achieving the optimal balance between UX objectives and business objectives requires validating assumptions with data. Furthermore, time is valuable; cross-functional collaboration must be driven by clear goals and purpose to be effective."
+
+url: "https://apps.apple.com/us/app/track-my-calories-now/id6443662790"
+---
+
+import ImagePlaceholder from "../../components/case-study/ImagePlaceholder.astro";
+import Carousel from "../../components/case-study/Carousel.astro";
+import PhoneGallery from "../../components/case-study/PhoneGallery.astro";
+import DietTypeSplit from "../../components/case-study/DietTypeSplit.astro";
+
+## The Problem
+
+Arc7's onboarding was bleeding users, but fixing it wasn't as simple as just "making it shorter". The redesign needed to:
+
+- Drastically reduce the drop-off rate on complex data-entry screens
+- Balance the business hypothesis of a "fast" funnel against the users' psychological need for a "thorough" health assessment
+- Ship iteratively so Engineering and PMs could measure the exact impact of sequence changes via rigorous A/B testing
+
+<ImagePlaceholder src="/images/problemdata.png" />
+
+> My optimization strategy was twofold. First, I prioritized the low-hanging fruit first: **resolving immediate usability bottlenecks.** Once the baseline was stabilized, I turned to a larger data-driven hypothesis that our onboarding was simply too long and **set up rigorous user testing** to verify if length was actually the problem.
+
+
+
+---
+
+## Design Audits: The Lower-Hanging Fruit
+
+To kick off the optimization process, I started by conducting a comprehensive design audit (including a cognitive walkthrough) on the current flow to fix existing usability issues . Fixing usability issues is often the lowest-hanging fruit to optimize the conversion rate before making larger structural changes. By tracking data, I pinpointed pages with high jump-out rates and abnormal Page Visit to Unique Visit (PV/UV) ratios .
+
+### The Example - Diet Type Page
+The "Diet Type" page is a perfect example of how I found and fixed these issues. Data tracking showed it had a **highly disproportionate PV/UV ratio of around 138%**, indicating severe usability blocks . A cognitive walkthrough revealed a heavy visual load caused by a pie chart that acted as a placeholder rather than providing useful information, and a structure that contradicted the user's mental model.
+
+### The solution
+
+I removed the pie chart to reduce visual load and restructured the page layout . I then adopted a flow of: Diet Type -> Pre-set Macronutrient Goal -> Detailed Percentage, better aligning with users' behaviors.
+
+<DietTypeSplit
+  beforeSrc="/images/diettype.png"
+  beforeDesc="Heavy visual load — pie chart acts as placeholder, structure contradicts user mental model"
+/>
+
+---
+
+## Validating Assumptions Via Usability Testing
+
+I initially assumed the onboarding was too long. However, during 30-minute think-aloud usability testing sessions with 3 power users and 3 novice users, I discovered a discrepancy between user perceptions and data-informed assumptions. 5 out of 6 users felt the length was appropriate, anticipating an extended process for a diet app.
+
+
+> This discrepancy prompted me to **initiate A/B testings** with a revised version. This approach will help us determine the optimal length for OB without the influence of usability issues.
+
+<ImagePlaceholder src="/images/abtestingplan.png" />
+
+---
+
+## The Strategic A/B Testing Phase
+
+### Test 1 - About Onboarding Length
+
+To determine the optimal length for the onboarding process, I designed a multi-variant A/B test comparing three distinct flows.
+
+- **Group A (8 pages)** was a heavily streamlined flow inspired by a competitive analysis of top-performing diet apps on the market.
+- **Group B (13 pages)** was a balanced flow directly informed by our qualitative usability testing, which revealed that users wanted more customization to ensure a personalized health plan.
+- **Group C (25 pages)** served as our control, retaining the original length for baseline comparison.
+
+<Carousel items={[
+  {
+    label: "Group A — 8 pages",
+    description: "Heavily streamlined flow inspired by competitive analysis of top-performing diet apps.",
+    src: "/images/testa-groupa.png"
+  },
+  {
+    label: "Group B — 13 pages",
+    description: "Balanced flow informed by usability testing — users wanted more customization for a personalized health plan.",
+    src: "/images/testa-groupb.png",
+  },
+  {
+    label: "Group C — 25 pages (Control)",
+    description: "Original flow retained as baseline for comparison.",
+    src: "/images/testa-groupc.png",
+  },
+]} />
+
+**Group B won the testing**. After 3 weeks testing, there were no significant differences between Group A and Group B in terms of OB completion, but Group B won the total conversion rate with 7.94%
+
+<ImagePlaceholder src="/images/testa.png" />
+
+### Test 2 - About Premium Pitch Placement
+
+With the optimal onboarding length established, my next focus was maximizing the start trial rate by determining the most effective placement for the premium pitch.
+
+- **The Control group** kept the premium pitch at the very end of the flow, operating on the hypothesis that allowing users to fully customize their health plans first would build investment and increase their intent to upgrade .
+- Conversely, **the Test group** positioned the premium pitch immediately as the second screen. The rationale here was to prioritize visibility, ensuring a larger portion of users were exposed to the offer early on before any natural drop-off could occur .
+
+<Carousel items={[
+  {
+    label: "Control — Pitch at the end",
+    description: "Premium pitch appears at the very end of the flow, after users have fully customized their health plan.",
+    src: "/images/testb-test.png",
+  },
+  {
+    label: "Test — Pitch at screen 2",
+    description: "Premium pitch appears immediately as the second screen, maximizing early exposure.",
+    src: "/images/testb-control.png",
+  },
+]} />
+
+Surprisingly, **the Control group (pitching at the very end of the onboarding) won with an 8.13% conversion rate**, compared to 6.99% for the Test group which pitched it early. Users needed to feel their plan was fully customized before they had the intent to upgrade.
+<ImagePlaceholder src="/images/resultb.png" />
+---
+
+## Final Design
+
+### Onboarding
+We concluded that extending the Onboarding (OB) slightly with additional input options would enhance conversion rate of starting trial for premium plan. The final 13-screen flow balances personalization depth with a streamlined experience informed by our A/B test findings.
+
+<PhoneGallery items={[
+  { src: "/images/onboarding/OB_01.png", label: "Welcome" },
+  { src: "/images/onboarding/OB_02.png", label: "Social Proof" },
+  { src: "/images/onboarding/OB_03.png", label: "Biological Sex" },
+  { src: "/images/onboarding/OB_04.png", label: "Age" },
+  { src: "/images/onboarding/OB_05.png", label: "Height" },
+  { src: "/images/onboarding/OB_06.png", label: "Goals" },
+  { src: "/images/onboarding/OB_07.png", label: "Current Weight" },
+  { src: "/images/onboarding/OB_08.png", label: "Ideal Weight" },
+  { src: "/images/onboarding/OB_09.png", label: "Goal Timeline" },
+  { src: "/images/onboarding/OB_10.png", label: "Activity Level" },
+  { src: "/images/onboarding/OB_11.png", label: "Your Name" },
+  { src: "/images/onboarding/OB_12.png", label: "You're All Set!" },
+  { src: "/images/onboarding/OB_13.png", label: "Premium Pitch" },
+]} />
+
+### In-App
+The remaining information collection will be moved to post-Onboarding, supported by a pop-up encouraging users to provide these details for a more personalized health plan.
+
+<ImagePlaceholder src="/images/inapp.png" />

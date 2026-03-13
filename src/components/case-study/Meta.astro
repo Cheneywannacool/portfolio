@@ -1,0 +1,149 @@
+---
+/**
+ * Context & Scope
+ * Shows: role, timeline, and cross-functional partners.
+ */
+
+interface TeamMember {
+  name?: string;
+  role: string;
+}
+
+interface Props {
+  role?: string;
+  timeline?: string;
+  team?: TeamMember[];
+  url?: string;
+  repo?: string;
+  date: Date;
+  holder?: string;
+  holderValue?: string;
+}
+
+const { role, timeline, team, url, repo, date, holder, holderValue } = Astro.props;
+
+const dateFormatted = date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+});
+
+const hasAnyMeta = role || timeline || (team && team.length > 0);
+if (!hasAnyMeta) return;
+---
+
+<section style="
+  margin-bottom: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+">
+  {role && (
+    <div style="background:var(--card);padding:1.25rem 1.5rem;">
+      <p style="
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--coral);
+        margin-bottom: 0.5rem;
+      ">My Role</p>
+      <p style="
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
+        font-size: 1.05rem;
+        color: var(--text);
+        line-height: 1.3;
+      ">{role}</p>
+    </div>
+  )}
+
+  {timeline && (
+    <div style="background:var(--card);padding:1.25rem 1.5rem;">
+      <p style="
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--coral);
+        margin-bottom: 0.5rem;
+      ">Timeline</p>
+      <p style="
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
+        font-size: 1.05rem;
+        color: var(--text);
+        line-height: 1.3;
+      ">{timeline}</p>
+    </div>
+  )}
+
+  {team && team.length > 0 && (
+    <div style="background:var(--card);padding:1.25rem 1.5rem;">
+      <p style="
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--coral);
+        margin-bottom: 0.625rem;
+      ">Team</p>
+      <div style="display:flex;flex-direction:column;gap:0.35rem;">
+        {team.map(member => (
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+            <span style="
+              font-size: 0.68rem;
+              font-weight: 600;
+              letter-spacing: 0.04em;
+              color: var(--tag-text);
+              background: var(--tag-bg);
+              padding: 0.15rem 0.5rem;
+              border-radius: 9999px;
+              white-space: nowrap;
+            ">{member.role}</span>
+            {member.name && (
+              <span style="font-size:0.82rem;font-weight:400;color:var(--text-2);">{member.name}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div style="background:var(--card);padding:1.25rem 1.5rem;">
+    <p style="
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 0.5rem;
+    ">{holder ?? "Holder"}</p>
+    <p style="
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.3;
+    ">{holderValue ?? dateFormatted}</p>
+    {(url || repo) && (
+      <div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
+        {url && (
+          <a href={url} target="_blank" rel="noopener noreferrer"
+            class="btn-coral" style="font-size:0.72rem;padding:0.3rem 0.85rem;">
+            Live ↗
+          </a>
+        )}
+        {repo && (
+          <a href={repo} target="_blank" rel="noopener noreferrer"
+            class="btn-outline" style="font-size:0.72rem;padding:0.3rem 0.85rem;">
+            Source ↗
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+</section>

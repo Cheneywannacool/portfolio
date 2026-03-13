@@ -1,0 +1,65 @@
+---
+const year = new Date().getFullYear();
+
+const links = [
+  { href: "https://dribbble.com", label: "Dribbble" },
+  { href: "https://linkedin.com", label: "LinkedIn" },
+  { href: "https://twitter.com", label: "X / Twitter" },
+  { href: "https://github.com", label: "GitHub" },
+];
+---
+
+<footer style="
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 0;
+">
+  <div style="
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  ">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <span style="
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
+        font-size: 1.1rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      ">
+        Jingzhi<span style="color:var(--coral);">.</span>
+      </span>
+      <span style="font-size:0.8rem;color:var(--text-3);font-weight:300;">
+        &copy; {year}
+      </span>
+    </div>
+
+    <nav style="display:flex;align-items:center;gap:1.5rem;" aria-label="Social links">
+      {
+        links.map(({ href, label }) => (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            style="
+              font-size: 0.825rem;
+              font-weight: 500;
+              color: var(--text-3);
+              text-decoration: none;
+              transition: color 0.2s;
+            "
+            onmouseover="this.style.color='var(--coral)'"
+            onmouseout="this.style.color='var(--text-3)'"
+          >
+            {label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</footer>

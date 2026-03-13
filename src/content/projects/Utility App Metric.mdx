@@ -1,0 +1,149 @@
+---
+title: "Scaling Up the Utility App Matrix"
+description: "A standardized growth design framework that increased start trial rates by 22% across a portfolio of 15+ utility apps."
+date: 2025-11-01
+tags: ["Design Systems", "Growth Design", "A/B Testing", "Cross-Functional Leadership"]
+cover: "/images/Growth.png"
+featured: true
+holder: "Company"
+holderValue: "Eightpoint"
+
+problem: "The team needed to rapidly scale our utility app matrix, but a lean team of 3 designers managing 15+ apps created an unsustainable bottleneck. Also, without a systemic way to share successful design patterns, we were constantly reinventing the wheel instead of compounding our wins."
+result: "20%"
+resultLabel: "Increase in the overall start trial rate across the board"
+resultContext: "With 2+ more utility apps shipped per sprint cycle"
+
+role: "Lead Product Designer"
+timeline: "Q3 2024 – Q1 2025"
+team:
+  - { role: "Design"}
+  - { role: "Engineering"}
+  - { role: "PM"}
+  - { role: "User Acquisition"}
+  - { role: "Data"}
+
+reveal: "/images/growth-thumbnail.png"
+revealCaption: "The growth framework in action across the utility portfolio"
+
+metrics:
+  - { value: "2+", label: "More utility apps shipped", delta: "per sprint cycle" }
+  - { value: "20%", label: "Increase in the overall start trial rate", delta: "across the portfolio" }
+  - { value: "5", label: "teams in align", delta: "on growth goals" }
+
+
+reflection: "This project shifted my approach to design. I now start thinking about overarching scalability rather than focusing on individual wins and immediate needs."
+
+url: "https://www.eetapps.com/"
+
+---
+
+import ImagePlaceholder from "../../components/case-study/ImagePlaceholder.astro";
+import ExampleGrid    from "../../components/case-study/ExampleGrid.astro";
+import BeforeAfter    from "../../components/case-study/BeforeAfter.astro";
+
+## The Constraint
+
+The business needed to rapidly scale the portfolio, but we were bottlenecked. Every launch needed to:
+* Be supported by a lean design team without causing burnout.
+* Overcome siloed knowledge where we couldn't leverage cross-app learning or avoid repeated mistakes.
+* Align stakeholders across 5 distinct teams who had varying priorities.
+* Maintain or increase baseline start-trial conversions without adding overhead.
+
+> Instead of designing screens ad-hoc, I shifted the team to a **Standardized Design Framework**. I spearheaded alignment with the cross-functional teams to create a shared repository for A/B test wins and losses.
+
+Having a standardized growth design framework could help solve the pain points since not only could it solve the immediate resource constraint but also builds long-term organizational capability for faster, more effective app development.
+
+<ImagePlaceholder src="/images/standardized-design-framework.png" alt="Standardized Design Framework" aspectRatio="7/5" />
+
+---
+
+## Activation - Build a 3-screen Onboarding Framework As the Firm Foundation
+
+I first connected with `PM` and discussed the goals for activation: **Having a standardized onboarding flow**
+* To reduce the time spent on building up new Onboarding flows for new apps.
+* Could served as the firm foundation for the team to start testing on different elements based on each App’s key features and working scenarios.
+
+> To reach the goals, I designed and rigorously A/B tested **a standardized 3-screen onboarding sequence** (Splash -> Social Proof -> Premium) .
+
+### Psychology-Driven Design
+
+After referring psycology principles and doing some exploration. I integrated specific psychological elements, including Social Proof (showcasing positive user reviews to reinforce value), Leading Lines (to visually guide users to desired actions), and Targeted CTA Headlines.
+
+<ExampleGrid items={[
+  {
+    src: "/images/social-proof.png",
+    aspectRatio: "4/3",
+    title: "Social Proof",
+    description: "Showcasing real user reviews on the splash screen to reinforce perceived value before the ask.",
+  },
+  {
+    src: "/images/leading-lines.png",
+    aspectRatio: "4/3",
+    title: "Leading Lines",
+    description: "Visual composition guides the eye toward the primary CTA, reducing hesitation at decision points.",
+  },
+  {
+    src: "/images/target-CTA.png",
+    aspectRatio: "4/3",
+    title: "Targeted CTA Headlines",
+    description: "Headlines matched to the user's current job-to-be-done, increasing headline-to-tap conversion.",
+  },
+]} />
+
+### Data-Backed Decisions
+
+After design, I conducted several rounds of A/B Testing (also with previous testings) to validate assumptions and make design decisions in the following: 
+* Length of the onboarding 
+* What elements work the best in terms of improving start trial rate
+
+Through multiple A/B tests, I proved that adding Social Proof , "Sandwiching" benefits in bullet points , and using a 3-page flow with a splash screen (versus a 2-page flow) yielded the most optimal start trial rates.
+
+<ImagePlaceholder src="/images/abtesting.png" alt="AB Testing" aspectRatio="7/5" />
+
+### The Deliverable
+
+This was packaged into a reusable UI Kit within our design system, providing a solid foundation for scalability.
+
+<ImagePlaceholder src="/images/framerwork.png" alt="OB Framework" aspectRatio="7/5" />
+
+---
+
+## Monetization via Labor-Perception Bias
+
+After discussing with `UA` and `PM`, we aligned on the goals for Monetization: **Identifying scalable solutions to minimize upgrading friction**
+
+Then I analyzed our premium flows through the lens of psychology and decided to utilize `Labor-Perception Bias` (users become invested in their progress after spending time on a task) to improve monetization.
+
+### The Application
+
+Using our AI Math Solver app as an example, instead of hitting users with a paywall immediately, we allowed them to deeply engage by scanning a problem and waiting for the "Analyzing" state. We pitched the premium upgrade exactly at the "Solution Found!" moment to boost upgrade motivation.
+
+
+### The Execution
+
+> **Using `Animation` + `Tactile Feedback`** to reinforce the motivation
+
+I collaborated with motion designers to create loading animations with visual and tactile feedback to reinforce the user's motivation to upgrade before the pitch. This framework boosted the In-App Start Trial Rate from **6.15% to 7.01%** on the Math app. It also brings around **41%** increase in In-App Start Trial Rate across the board.
+
+<BeforeAfter
+  beforeLabel="Before"
+  beforeDesc="Immediate paywall — users hit the upgrade screen before any engagement"
+  beforeSrc="/images/before.png"
+  afterLabel="After"
+  afterDesc="LPB flow — premium pitch lands at peak motivation (Solution Found! moment)"
+  afterVideoSrc="/images/after.mp4"
+  afterPortrait
+/>
+
+---
+
+## The Global-to-Local Design System
+
+To solve the design bottleneck, I built a Global Design System for all utility apps to ensure baseline consistency (colors, typography, basic UI components) . This was paired with a Local Design System for each app to host unique components and ensure flexibility.
+
+<ImagePlaceholder src="/images/design-system.png" alt="OB Framework" aspectRatio="7/5" />
+
+---
+## Collaboration & Team Alignment
+
+Managing a 20-person, 5-team initiative required deliberate communication. I established a rule to provide clear goals and purpose during each collaboration session, documented all key insights for the team's reference, and created compelling presentations to secure stakeholder buy-in early on. This fostered strong alignment on our growth goals across all departments.
