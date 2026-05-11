@@ -74,6 +74,7 @@ const resolvedItems = await Promise.all(
     padding: 0.75rem 0.25rem 1rem;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
   }
   .pg-scroll::-webkit-scrollbar { display: none; }
 
@@ -83,6 +84,7 @@ const resolvedItems = await Promise.all(
     align-items: center;
     gap: 0.6rem;
     flex-shrink: 0;
+    scroll-snap-align: start;
   }
 
   .pg-screen {
@@ -90,6 +92,11 @@ const resolvedItems = await Promise.all(
     width: auto;
     display: block;
     border-radius: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .pg-screen { height: 220px; }
+    .pg-scroll { padding-inline: 0.5rem; }
   }
 
   .pg-placeholder {

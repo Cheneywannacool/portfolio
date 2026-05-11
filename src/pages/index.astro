@@ -560,6 +560,9 @@ const collaborations = await Promise.all(
     background: var(--bg-alt);
     overflow: hidden;
   }
+  @media (max-width: 700px) {
+    .build-media { aspect-ratio: 16 / 10; }
+  }
   .build-media-fill {
     position: absolute;
     inset: 0;

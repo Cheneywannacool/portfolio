@@ -134,11 +134,10 @@ const coverImageData = await resolveImage(cover);
     </div>
 
     <!-- Problem + Result row -->
-    <div style="display:grid;grid-template-columns:1fr auto;gap:0;">
+    <div class="hero-pr-row">
       <!-- The Problem -->
-      <div style="
+      <div class="hero-pr-problem" style="
         padding: 1.5rem 2.25rem;
-        border-right: 1px solid var(--border);
       ">
         <p style="
           font-size: 0.68rem;
@@ -164,7 +163,7 @@ const coverImageData = await resolveImage(cover);
 
       <!-- The Result -->
       {result && (
-        <div style="
+        <div class="hero-pr-result" style="
           padding: 1.5rem 2.25rem;
           min-width: 11rem;
           display: flex;
@@ -200,3 +199,22 @@ const coverImageData = await resolveImage(cover);
     </div>
   </div>
 </section>
+
+<style>
+  .hero-pr-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0;
+  }
+  .hero-pr-problem {
+    border-right: 1px solid var(--border);
+  }
+  @media (max-width: 640px) {
+    .hero-pr-row { grid-template-columns: 1fr; }
+    .hero-pr-problem {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-pr-result { min-width: 0 !important; width: 100%; }
+  }
+</style>
