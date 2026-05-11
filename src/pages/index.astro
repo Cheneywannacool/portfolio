@@ -51,10 +51,14 @@ const buildingRaw = [
   {
     title: "BitGarden",
     description: "An engaging in-house experience for colleagues to send kudos to each other — turning recognition into a delightful moment.",
-    tags: ["React", "Engagement"],
-    link: "",
+    tags: ["Game", "Engagement"],
+    link: "https://github.com/jingzhix255/BitGarden/tree/main",
     src: "",
     video: "/images/bit-garden-compressed.mp4",
+    tech: [
+      { name: "Godot", note: "game engine", icon: "/icons/godot.svg" },
+      { name: "SQLite", note: "database", icon: "/icons/sqlite.svg" },
+    ],
   },
   {
     title: "Caller ID Personality Test",
@@ -165,6 +169,17 @@ const collaborations = await Promise.all(
               <a href={item.link} target="_blank" rel="noopener noreferrer" class="build-link">
                 More Information →
               </a>
+            )}
+            {item.tech && item.tech.length > 0 && (
+              <ul class="build-tech" aria-label="Tech stack">
+                {item.tech.map(t => (
+                  <li class="build-tech-item">
+                    <img src={t.icon} alt="" class="build-tech-icon" width="14" height="14" />
+                    <span class="build-tech-name">{t.name}</span>
+                    {t.note && <span class="build-tech-note">{t.note}</span>}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 
@@ -553,6 +568,47 @@ const collaborations = await Promise.all(
     width: fit-content;
   }
   .build-link:hover { opacity: 0.8; transform: translateX(4px); }
+
+  .build-tech {
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .build-tech-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.65rem;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    color: var(--text-2);
+  }
+  .build-tech-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    object-fit: contain;
+    opacity: 0.85;
+  }
+  :global(.dark) .build-tech-icon {
+    filter: invert(1);
+  }
+  .build-tech-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .build-tech-note {
+    color: var(--text-3);
+    font-weight: 400;
+  }
+  .build-tech-note::before { content: "· "; }
 
   /* Right: media panel */
   .build-media {
