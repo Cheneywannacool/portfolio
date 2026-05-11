@@ -23,3 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 public/images/*.mp4
+!public/images/bit-garden-compressed.mp4
+!public/images/callerid-compressed.mp4
+!public/images/plug-in.mp4
