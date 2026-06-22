@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import JourneyFilmstrip from "../components/JourneyFilmstrip.astro";
 import { getImage } from "astro:assets";
 import { resolveImage } from "../utils/images";
 
@@ -25,36 +26,48 @@ const journeyRaw = [
     location: "Seattle, WA",
     description: "Getting back to Seattle!",
     photo: "/images/sea.jpg",
+    lat: 47.6062,
+    lon: -122.3321,
   },
   {
     year: "2023",
     location: "Bay Area, CA",
     description: "Moved to Bay Area in Dec, 2023 to get the Cali Vibe there(If there's any).",
     photo: "/images/bayarea.png",
+    lat: 37.7749,
+    lon: -122.4194,
   },
   {
     year: "2022",
     location: "Fort Myers, FL",
     description: "After grad school, I moved to Fort Myers, FL for my first full-time job in US.",
     photo: "/images/fm.png",
+    lat: 26.6406,
+    lon: -81.8723,
   },
   {
     year: "2021",
     location: "Bellevue, WA",
     description: "My trip at Bellevue started from September, 2021. I love this city and its lovely sunset.",
     photo: "/images/bellevue.jpg",
+    lat: 47.6101,
+    lon: -122.2015,
   },
   {
     year: "2018",
     location: "Stockholm, Sweden",
     description: "I went to exchange at KTH, Stockholm, Sweden. I saw aurora for the first time in my life.",
     photo: "/images/stockholm.png",
+    lat: 59.3293,
+    lon: 18.0686,
   },
   {
     year: "2016",
     location: "Hong Kong",
     description: "My first flight to HKG. I spent 4 years in Hong Kong, and I feel mixed about this city and my memories there.",
     photo: "/images/hk.png",
+    lat: 22.3193,
+    lon: 114.1694,
   },
 ];
 
@@ -204,59 +217,7 @@ const journey = await Promise.all(
       <h2 class="timeline-title">Where I've<br/><em>been.</em></h2>
     </div>
 
-    <div class="timeline-track">
-      {journey.map((stop, i) => (
-        <div class="timeline-stop">
-
-          <!-- Spine connector -->
-          <div class="spine">
-            <div class="spine-dot"></div>
-            {i < journey.length - 1 && <div class="spine-line"></div>}
-          </div>
-
-          <!-- Year + Location -->
-          <div class="stop-year-col">
-            <span class="stop-year">{stop.year}</span>
-            <span class="stop-location">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px;">
-                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              {stop.location}
-            </span>
-          </div>
-
-          <!-- Content -->
-          <div class="stop-content">
-
-            <!-- Image -->
-            <div class="stop-img">
-              {stop.photoSrc ? (
-                <img src={stop.photoSrc} alt={stop.location} style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;" />
-              ) : (
-                <div class="stop-img-inner">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5"
-                    stroke-linecap="round" stroke-linejoin="round"
-                    aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="3"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                  </svg>
-                  <span class="stop-img-label">Add photo</span>
-                </div>
-              )}
-            </div>
-
-            <!-- Text -->
-            <div class="stop-text">
-              <p class="stop-desc">{stop.description}</p>
-            </div>
-
-          </div>
-        </div>
-      ))}
-    </div>
+    <JourneyFilmstrip stops={journey} />
   </section>
 
 </BaseLayout>
@@ -469,149 +430,4 @@ const journey = await Promise.all(
     font-style: italic;
   }
 
-  /* Track */
-  .timeline-track {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .timeline-stop {
-    display: grid;
-    grid-template-columns: 32px 11rem 1fr;
-    gap: 0 2rem;
-    align-items: start;
-  }
-
-  @media (max-width: 760px) {
-    .timeline-stop {
-      grid-template-columns: 32px 1fr;
-      grid-template-rows: auto auto;
-    }
-    .stop-year-col { grid-column: 2; }
-    .stop-content  { grid-column: 2; }
-  }
-
-  /* Spine */
-  .spine {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 0.5rem;
-  }
-
-  .spine-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 9999px;
-    background: var(--coral);
-    border: 2px solid var(--bg);
-    outline: 2px solid var(--coral);
-    flex-shrink: 0;
-    z-index: 1;
-  }
-
-  .spine-line {
-    width: 2px;
-    flex: 1;
-    min-height: 100%;
-    background: linear-gradient(to bottom, var(--coral), var(--coral-dim));
-    margin-top: 0.25rem;
-    opacity: 0.35;
-  }
-
-  /* Year column */
-  .stop-year-col {
-    padding-top: 0.125rem;
-    padding-bottom: 3rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-  }
-
-  .stop-year {
-    font-family: "Instrument Serif", Georgia, serif;
-    font-style: italic;
-    font-size: 2.5rem;
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--coral);
-    display: block;
-  }
-
-  .stop-location {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    color: var(--text-3);
-  }
-
-  /* Content block */
-  .stop-content {
-    padding-bottom: 3.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.125rem;
-  }
-
-  /* Image placeholder */
-  .stop-img {
-    aspect-ratio: 16 / 7;
-    border-radius: 1.25rem;
-    background: var(--bg-alt);
-    border: 1.5px dashed var(--coral-mid);
-    overflow: hidden;
-    position: relative;
-  }
-
-  .stop-img-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: var(--coral);
-    opacity: 0.3;
-  }
-
-  .stop-img-label {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  /* Text */
-  .stop-role {
-    font-size: 1.0625rem;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  .stop-company {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--coral);
-    margin: 0;
-    opacity: 0.8;
-  }
-
-  .stop-desc {
-    font-size: 0.9rem;
-    font-weight: 300;
-    line-height: 1.7;
-    color: var(--text-2);
-    margin: 0;
-    max-width: 44rem;
-  }
 </style>

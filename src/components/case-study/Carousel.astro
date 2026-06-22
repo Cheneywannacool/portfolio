@@ -169,16 +169,20 @@ const hasDescriptions = resolvedItems.some((i) => i.description);
 
   /* ── Visual card wraps ONLY tabs + image ── */
   .cr-wrap {
-    border: 1px solid var(--border);
-    border-radius: 1.5rem;
+    border: 1px solid #e4e4e7;
+    border-radius: 0.75rem;
     overflow: hidden;
-    background: transparent;
+    background: #fafafa;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03),
+      0 16px 32px rgba(0, 0, 0, 0.02);
   }
 
   /* ── Tabs ── */
   .cr-tabs {
     display: flex;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid #e4e4e7;
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -192,17 +196,17 @@ const hasDescriptions = resolvedItems.some((i) => i.description);
     padding: 0.875rem 1.25rem;
     background: none;
     border: none;
-    border-right: 1px solid var(--border);
+    border-right: 1px solid #e4e4e7;
     cursor: pointer;
     text-align: left;
     transition: background 0.2s;
     min-width: 0;
   }
   .cr-tab:last-child { border-right: none; }
-  .cr-tab:hover { background: var(--bg-alt); }
+  .cr-tab:hover { background: #f4f4f5; }
 
   .cr-tab--active {
-    background: var(--bg-alt);
+    background: #f4f4f5;
     box-shadow: inset 0 -2px 0 var(--coral);
   }
 
@@ -254,7 +258,7 @@ const hasDescriptions = resolvedItems.some((i) => i.description);
     position: relative;
     width: 100%;
     overflow: hidden;
-    background: var(--bg-alt);
+    background: #fafafa;
     min-width: 0;
   }
 
@@ -262,6 +266,9 @@ const hasDescriptions = resolvedItems.some((i) => i.description);
     display: block;
     width: 100%;
     height: auto;
+    margin: 0;
+    border: none;
+    border-radius: 0;
   }
 
   .cr-placeholder {
@@ -310,7 +317,7 @@ const hasDescriptions = resolvedItems.some((i) => i.description);
     width: 2rem;
     height: 2rem;
     border-radius: 9999px;
-    border: 1px solid var(--border);
+    border: 1px solid #e4e4e7;
     background: transparent;
     color: var(--text-2);
     display: flex;

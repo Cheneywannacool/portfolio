@@ -192,6 +192,19 @@
     display: block;
   }
 
+  /* Reset prose img overrides inside component wrappers (specificity 31 beats rule above at 21) */
+  .deep-prose :global(.img-placeholder-wrap img),
+  .deep-prose :global(.eg-img-wrap img),
+  .deep-prose :global(.ba-media img),
+  .deep-prose :global(.ba-media video),
+  .deep-prose :global(.cr-img-wrap img),
+  .deep-prose :global(.dts-media img),
+  .deep-prose :global(.pg-screen) {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+  }
+
   .deep-prose :global(a) {
     color: var(--coral);
     text-decoration: underline;

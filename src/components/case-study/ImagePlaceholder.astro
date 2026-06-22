@@ -53,17 +53,33 @@ const imageData = await resolveImage(src);
 
 
 <style>
+  /* ── Vercel sandbox-style showcase frame (light) ─────────────── */
   .img-placeholder-wrap {
     display: block;
     width: 100%;
-    border-radius: 1.25rem;
+    border-radius: 0.75rem;
     overflow: hidden;
-    border: 1.5px dashed var(--coral-mid);
-    background: var(--bg-alt);
-    margin: 1.75rem 0;
+    border: 1px solid #e4e4e7;
+    background-color: #fafafa;
+    margin: 2rem 0;
     position: relative;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03),
+      0 16px 32px rgba(0, 0, 0, 0.02);
   }
 
+  /* Image fills the container — outer border is the only frame */
+  .img-placeholder-wrap :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  /* Placeholder state (no image yet) */
   .img-placeholder-inner {
     position: absolute;
     inset: 0;
@@ -72,8 +88,7 @@ const imageData = await resolveImage(src);
     align-items: center;
     justify-content: center;
     gap: 0.625rem;
-    color: var(--coral);
-    opacity: 0.45;
+    color: #a1a1aa;
   }
 
   .img-placeholder-label {
@@ -82,6 +97,6 @@ const imageData = await resolveImage(src);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--coral);
+    color: #a1a1aa;
   }
 </style>
