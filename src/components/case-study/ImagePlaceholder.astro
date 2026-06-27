@@ -29,10 +29,10 @@ const imageData = await resolveImage(src);
     <Image
       src={imageData}
       alt={alt ?? label}
-      widths={[800, 1600, 2800]}
-      sizes="(max-width: 900px) 100vw, 830px"
-      format="webp"
-      quality={90}
+      widths={[900, 1800, 3000, 3600]}
+      sizes="(max-width: 900px) 100vw, 900px"
+      format="png"
+      quality={100}
       style="width:100%;height:auto;display:block;"
     />
   ) : src ? (
