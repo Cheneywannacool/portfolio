@@ -15,10 +15,10 @@
   <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:2rem;">
     <div style="width:2px;height:1.25rem;border-radius:9999px;background:var(--coral);flex-shrink:0;"></div>
     <h2 style="
-      font-family: 'Instrument Serif', Georgia, serif;
-      font-style: italic;
+      font-family: var(--font-serif);
+      font-style: normal;
+      font-weight: 700;
       font-size: 1.65rem;
-      font-weight: 400;
       letter-spacing: -0.025em;
       color: var(--text);
       margin: 0;
@@ -90,7 +90,6 @@
     padding: 0;
     background: var(--card);
     border: 1px solid var(--border);
-    border-top: 2.5px solid var(--coral);
     border-radius: 1.25rem;
     font-style: normal;
     overflow: hidden;
@@ -176,7 +175,7 @@
   .deep-prose :global(ol li) { margin-bottom: 0.4rem; }
 
   .deep-prose :global(strong) { font-weight: 700; color: var(--text); }
-  .deep-prose :global(em)     { font-style: italic; }
+  .deep-prose :global(em)     {  }
 
   .deep-prose :global(hr) {
     border: none;
@@ -199,6 +198,7 @@
   .deep-prose :global(.ba-media video),
   .deep-prose :global(.cr-img-wrap img),
   .deep-prose :global(.dts-media img),
+  .deep-prose :global(.abt-img),
   .deep-prose :global(.pg-screen) {
     border: none;
     border-radius: 0;

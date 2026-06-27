@@ -20,20 +20,9 @@ if (!reveal && !revealGallery?.length) return;
 
 <section style="
   margin-bottom: 3.5rem;
-  padding: 2rem;
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 2rem;
+  padding: 2rem 0;
   position: relative;
-  overflow: hidden;
 ">
-  <!-- Ambient coral glow behind -->
-  <div style="
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(239,70,35,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  "></div>
 
   <!-- Section label -->
   <div style="
@@ -66,7 +55,7 @@ if (!reveal && !revealGallery?.length) return;
       font-size: 0.78rem;
       font-weight: 300;
       color: var(--text-3);
-      font-style: italic;
+      
     ">Final high-fidelity design</p>
   </div>
 
@@ -78,15 +67,13 @@ if (!reveal && !revealGallery?.length) return;
       <div style="
         border-radius: 1.25rem;
         overflow: hidden;
-        border: 1px solid var(--border);
-        box-shadow: 0 24px 64px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
       ">
         <img
           src={reveal}
           alt={`${title} — final solution`}
           loading="lazy"
           decoding="async"
-          style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover;"
+          style="width:100%;display:block;height:auto;"
         />
       </div>
     )}
@@ -100,7 +87,7 @@ if (!reveal && !revealGallery?.length) return;
       font-weight: 300;
       color: var(--text-3);
       text-align: center;
-      font-style: italic;
+      
       position: relative;
     ">{revealCaption}</p>
   )}

@@ -201,8 +201,8 @@ export default function AnimatedHero({ name, role, bio, photo, photoBack }: Prop
           <motion.h1
             variants={fadeUp}
             style={{
-              fontFamily: '"Instrument Serif", Georgia, serif',
-              fontStyle: "italic",
+              fontFamily: 'var(--font-serif)',
+              
               fontSize: "clamp(3.25rem, 7vw, 6rem)",
               fontWeight: 400,
               lineHeight: 1.04,

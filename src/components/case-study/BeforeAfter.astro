@@ -98,7 +98,7 @@ const afterImageData = await resolveImage(afterSrc);
 
   <!-- ── After ────────────────────────── -->
   <div class="ba-panel">
-    <div class="ba-media" style={`aspect-ratio:${afterPortrait ? '393/426' : aspectRatio};`}>
+    <div class={`ba-media${afterVideoSrc ? ' ba-media--mobbin' : ''}`} style={`aspect-ratio:${afterPortrait ? '393/426' : aspectRatio};`}>
       {afterVideoSrc ? (
         <video
           src={afterVideoSrc}
@@ -175,7 +175,7 @@ const afterImageData = await resolveImage(afterSrc);
     color: var(--text-2);
     line-height: 1.55;
     margin: 0 0 0.625rem;
-    font-style: italic;
+    
   }
 
   /* Media frame — Vercel sandbox style */
@@ -208,6 +208,27 @@ const afterImageData = await resolveImage(afterSrc);
   video.ba-fill {
     object-fit: contain;
     background: #000;
+  }
+
+  /* Mobbin-style: light container, video floats centred with space around it */
+  .ba-media--mobbin {
+    background: #f5f5f5;
+    border-color: #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .ba-media--mobbin video.ba-fill {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    background: transparent;
+    border-radius: 28px;
+    filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.22));
   }
 
   /* Placeholder */

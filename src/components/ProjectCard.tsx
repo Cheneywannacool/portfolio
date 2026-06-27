@@ -94,8 +94,8 @@ export default function ProjectCard({
           >
             <span
               style={{
-                fontFamily: '"Instrument Serif", Georgia, serif',
-                fontStyle: "italic",
+                fontFamily: 'var(--font-serif)',
+                
                 fontSize: "3rem",
                 color: "var(--coral)",
                 opacity: 0.25,
@@ -125,7 +125,7 @@ export default function ProjectCard({
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: "0.85rem",
-              fontWeight: 700,
+              fontWeight: 600,
               color: "#fff",
               letterSpacing: "0.01em",
               display: "flex",
@@ -153,7 +153,7 @@ export default function ProjectCard({
               alignItems: "center",
               gap: "0.3rem",
               fontSize: "0.68rem",
-              fontWeight: 700,
+              fontWeight: 600,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
               color: "#FFFFFF",
@@ -226,10 +226,9 @@ export default function ProjectCard({
       <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "1.5rem" }}>
         <h3
           style={{
-            fontFamily: '"Instrument Serif", Georgia, serif',
-            fontStyle: "italic",
+            fontFamily: 'var(--font-serif)',
             fontSize: "1.5rem",
-            fontWeight: 400,
+            fontWeight: 600,
             lineHeight: 1.18,
             letterSpacing: "-0.02em",
             color: "var(--text)",
@@ -280,7 +279,7 @@ export default function ProjectCard({
             alignItems: "center",
             gap: "0.35rem",
             fontSize: "0.82rem",
-            fontWeight: 700,
+            fontWeight: 600,
             color: "var(--coral)",
             textDecoration: "none",
             borderTop: "1px solid var(--border)",

@@ -1,0 +1,300 @@
+---
+import { resolveImage } from "../../utils/images";
+import { getImage } from "astro:assets";
+
+interface TabItem {
+  label: string;
+  description?: string;
+  metric?: string;         // e.g. "+5% Conversion Rate"
+  src?: string;
+  srcs?: string[];
+  imageLabels?: string[];  // e.g. ["Control", "Test"]
+}
+interface Props {
+  tabs: TabItem[];
+}
+
+const { tabs } = Astro.props;
+
+const resolved = await Promise.all(
+  tabs.map(async (tab) => {
+    const sources = tab.srcs ?? (tab.src ? [tab.src] : []);
+    const optimized = await Promise.all(
+      sources.map(async (src) => {
+        const imgData = await resolveImage(src);
+        return imgData
+          ? (await getImage({ src: imgData, width: 800, format: "webp", quality: 92 })).src
+          : src;
+      })
+    );
+    return { ...tab, optimized };
+  })
+);
+---
+
+<div class="abt-wrap" id="abtWrap">
+
+  <!-- Left: tabs -->
+  <div class="abt-tabs" role="tablist">
+    {resolved.map((tab, i) => (
+      <button
+        class={`abt-tab${i === 0 ? " abt-tab--active" : ""}`}
+        role="tab"
+        aria-selected={i === 0 ? "true" : "false"}
+        data-index={i}
+        onmousedown="this.blur()"
+      >
+        <!-- Inactive row -->
+        <span class="abt-inactive-row">
+          <span class="abt-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M8 5v6M5 8h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="abt-tab-label">{tab.label}</span>
+          {tab.metric && <span class="abt-metric-badge">{tab.metric}</span>}
+        </span>
+
+        <!-- Active expanded -->
+        <span class="abt-tab-expanded">
+          <span class="abt-tab-title">{tab.label}{tab.description ? "." : ""}</span>
+          {tab.description && <span class="abt-tab-desc"> {tab.description}</span>}
+          {tab.metric && <span class="abt-metric-badge abt-metric-badge--active">{tab.metric}</span>}
+        </span>
+      </button>
+    ))}
+  </div>
+
+  <!-- Right: images -->
+  <div class="abt-display" aria-live="polite">
+    {resolved.map((tab, i) => (
+      <div
+        class={`abt-panel${i === 0 ? " abt-panel--active" : ""}`}
+        data-index={i}
+        role="tabpanel"
+      >
+        {tab.optimized.length > 0 ? (
+          <div class={`abt-imgs abt-imgs--${tab.optimized.length > 1 ? "multi" : "single"}`}>
+            {tab.optimized.map((src, j) => (
+              <div class="abt-img-col">
+                {tab.imageLabels?.[j] && (
+                  <p class="abt-img-label">{tab.imageLabels[j]}</p>
+                )}
+                <img src={src} alt={tab.imageLabels?.[j] ?? `${tab.label} ${j + 1}`} class="abt-img" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="abt-placeholder">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span>Add image</span>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("#abtWrap").forEach((wrap) => {
+    const tabs   = wrap.querySelectorAll<HTMLElement>(".abt-tab");
+    const panels = wrap.querySelectorAll<HTMLElement>(".abt-panel");
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const idx = tab.dataset.index;
+        tabs.forEach((t) => { t.classList.remove("abt-tab--active"); t.setAttribute("aria-selected","false"); });
+        panels.forEach((p) => p.classList.remove("abt-panel--active"));
+        tab.classList.add("abt-tab--active");
+        tab.setAttribute("aria-selected","true");
+        wrap.querySelector<HTMLElement>(`.abt-panel[data-index="${idx}"]`)?.classList.add("abt-panel--active");
+      });
+    });
+  });
+</script>
+
+<style>
+  /* ── Shell ─────────────────────────────────────────────────── */
+  .abt-wrap {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin: 2.5rem -1rem;
+    padding: 2.5rem 3.5rem;
+    border-radius: 2rem;
+    background: #f5f5f5;
+  }
+
+  @media (max-width: 700px) {
+    .abt-wrap { grid-template-columns: 1fr; gap: 2rem; margin: 2rem 0; padding: 2rem; }
+  }
+
+  /* ── Tabs ─────────────────────────────────────────────────── */
+  .abt-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .abt-tab {
+    display: flex;
+    flex-direction: column;
+    padding: 0.6rem 0.875rem;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-sans, system-ui);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-2);
+    text-align: left;
+    transition: background 0.18s, color 0.18s;
+  }
+  .abt-tab:hover:not(.abt-tab--active) {
+    background: rgba(0,0,0,0.05);
+    color: var(--text);
+  }
+
+  /* Inactive row */
+  .abt-inactive-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .abt-icon {
+    display: flex;
+    align-items: center;
+    color: var(--text-3);
+    flex-shrink: 0;
+  }
+  .abt-tab-label { white-space: nowrap; }
+
+  /* Metric badge */
+  .abt-metric-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--coral);
+    background: rgba(239,70,35,0.1);
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .abt-metric-badge--active {
+    display: block;
+    width: fit-content;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.55rem;
+    margin-top: 0.75rem;
+  }
+
+  /* Expanded content */
+  .abt-tab-expanded { display: none; }
+  .abt-tab-title { font-weight: 600; color: var(--text); font-size: 0.9rem; }
+  .abt-tab-desc  { font-weight: 300; color: var(--text-2); font-size: 0.875rem; line-height: 1.6; }
+
+  /* Active state */
+  .abt-tab--active {
+    background: #fff;
+    border-color: transparent;
+    border-radius: 1.1rem;
+    padding: 1rem 1.125rem;
+    color: var(--text);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .abt-tab--active .abt-inactive-row { display: none; }
+  .abt-tab--active .abt-tab-expanded { display: block; }
+
+  /* ── Display ─────────────────────────────────────────────── */
+  .abt-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+  }
+
+  .abt-panel { display: none; width: 100%; animation: abtIn 0.38s cubic-bezier(0.22,1,0.36,1) forwards; }
+  .abt-panel--active { display: flex; align-items: flex-end; justify-content: center; }
+
+  @keyframes abtIn {
+    from { opacity: 0; transform: scale(0.97) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* Image columns */
+  .abt-imgs--single { display: flex; justify-content: center; width: 100%; }
+  .abt-imgs--multi  {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+  }
+
+  .abt-img-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex: 1 1 0;
+    max-width: calc(50% - 1rem);
+  }
+
+  .abt-img-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #555;
+    letter-spacing: 0.03em;
+    margin: 0 0 4px;
+  }
+
+  .abt-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0;
+    max-height: 560px;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,0.13));
+  }
+
+  .abt-imgs--single .abt-img-col { max-width: 320px; }
+  .abt-imgs--single .abt-img { max-height: 600px; width: auto; }
+
+  /* Prevent any global focus ring on these buttons */
+  .abt-tab:focus,
+  .abt-tab:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .abt-placeholder {
+    width: 100%; height: 480px;
+    border-radius: 1rem;
+    background: rgba(0,0,0,0.04);
+    border: 1.5px dashed rgba(239,70,35,0.4);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.5rem; color: var(--coral); opacity: 0.5;
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+</style>
+
+<style is:global>
+  .abt-tab:focus,
+  .abt-tab:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+</style>

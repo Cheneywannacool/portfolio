@@ -102,7 +102,7 @@ const more = await Promise.all(
         <div style="width:8px;height:8px;border-radius:9999px;background:var(--coral);"></div>
         <span style="
           font-size: 0.75rem;
-          font-weight: 700;
+          font-weight: 600;
           letter-spacing: 0.12em;
           text-transform: uppercase;
           color: var(--coral);
@@ -110,8 +110,8 @@ const more = await Promise.all(
       </div>
 
       <h1 style="
-        font-family: 'Instrument Serif', Georgia, serif;
-        font-style: italic;
+        font-family: var(--font-serif);
+        
         font-size: clamp(3rem, 7vw, 5.5rem);
         font-weight: 400;
         letter-spacing: -0.03em;
@@ -350,8 +350,8 @@ const more = await Promise.all(
   }
 
   .more-heading {
-    font-family: "Instrument Serif", Georgia, serif;
-    font-style: italic;
+    font-family: var(--font-serif);
+    
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 400;
     letter-spacing: -0.03em;
@@ -401,7 +401,7 @@ const more = await Promise.all(
     color: var(--text-3);
     margin: 0;
     letter-spacing: 0.05em;
-    font-style: italic;
+    
   }
 
   /* Right: deck */
@@ -472,7 +472,7 @@ const more = await Promise.all(
     border: 1.5px dashed var(--coral-mid);
     border-radius: 0.75rem;
     font-size: 0.62rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
@@ -492,7 +492,7 @@ const more = await Promise.all(
   }
   .more-type {
     font-size: 0.68rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--coral);
@@ -506,10 +506,9 @@ const more = await Promise.all(
   .more-arrow:hover { color: var(--coral); }
 
   .more-title {
-    font-family: "Instrument Serif", Georgia, serif;
-    font-style: italic;
+    font-family: var(--font-serif);
     font-size: 1.15rem;
-    font-weight: 400;
+    font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.25;
     color: var(--text);
