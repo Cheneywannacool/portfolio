@@ -43,15 +43,18 @@ metrics:
   - { value: "+20%", label: "Start Paid Rate", delta: "in P1" }
   - { value: "8%", label: "Core Conversion Rate", delta: "14% above benchmark" }
 
+reflectionTitle: "Validate before you assume"
 reflection: "I learned that reducing steps isn't always a panacea. Achieving the optimal balance between UX objectives and business objectives requires validating assumptions with data. Furthermore, time is valuable; cross-functional collaboration must be driven by clear goals and purpose to be effective."
 
 url: "https://apps.apple.com/us/app/track-my-calories-now/id6443662790"
 ---
 
 import ImagePlaceholder from "../../components/case-study/ImagePlaceholder.astro";
+import ImagePair from "../../components/case-study/ImagePair.astro";
 import Carousel from "../../components/case-study/Carousel.astro";
 import PhoneGallery from "../../components/case-study/PhoneGallery.astro";
 import DietTypeSplit from "../../components/case-study/DietTypeSplit.astro";
+import DecisionList from "../../components/case-study/DecisionList.astro";
 
 ## The Problem
 
@@ -61,9 +64,12 @@ Arc7's onboarding was bleeding users, but fixing it wasn't as simple as just "ma
 - Balance the business hypothesis of a "fast" funnel against the users' psychological need for a "thorough" health assessment
 - Ship iteratively so Engineering and PMs could measure the exact impact of sequence changes via rigorous A/B testing
 
-<ImagePlaceholder src="/images/problemdata.png" />
+<ImagePair left="/images/problemdata-1.png" right="/images/problemdata-2.png" />
 
-> My optimization strategy was twofold. First, I prioritized the low-hanging fruit first: **resolving immediate usability bottlenecks.** Once the baseline was stabilized, I turned to a larger data-driven hypothesis that our onboarding was simply too long and **set up rigorous user testing** to verify if length was actually the problem.
+<DecisionList items={[
+  { icon: "target", text: "Prioritized the low-hanging fruit first — resolving immediate usability bottlenecks before touching funnel length." },
+  { icon: "flask", text: "Once the baseline was stabilized, set up rigorous user testing to verify whether length was actually the problem." },
+]} />
 
 
 
@@ -92,7 +98,10 @@ I removed the pie chart to reduce visual load and restructured the page layout .
 I initially assumed the onboarding was too long. However, during 30-minute think-aloud usability testing sessions with 3 power users and 3 novice users, I discovered a discrepancy between user perceptions and data-informed assumptions. 5 out of 6 users felt the length was appropriate, anticipating an extended process for a diet app.
 
 
-> This discrepancy prompted me to **initiate A/B testings** with a revised version. This approach will help us determine the optimal length for OB without the influence of usability issues.
+<DecisionList items={[
+  { icon: "flask", text: "Initiated A/B testing with a revised version instead of trusting perception alone." },
+  { icon: "target", text: "Isolated the true impact of onboarding length from underlying usability issues." },
+]} />
 
 <ImagePlaceholder src="/images/abtestingplan.png" />
 
@@ -159,7 +168,7 @@ Surprisingly, **the Control group (pitching at the very end of the onboarding) w
 ### Onboarding
 We concluded that extending the Onboarding (OB) slightly with additional input options would enhance conversion rate of starting trial for premium plan. The final 13-screen flow balances personalization depth with a streamlined experience informed by our A/B test findings.
 
-<PhoneGallery items={[
+<PhoneGallery flowTitle="Onboarding in Arc7" items={[
   { src: "/images/onboarding/OB_01.png", label: "Welcome" },
   { src: "/images/onboarding/OB_02.png", label: "Social Proof" },
   { src: "/images/onboarding/OB_03.png", label: "Biological Sex" },

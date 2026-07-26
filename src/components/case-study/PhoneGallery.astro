@@ -1,9 +1,13 @@
 ---
 /**
- * PhoneGallery — horizontal scrollable strip of phone mockups.
+ * PhoneGallery — Mobbin-style flow viewer.
  *
- * Pass an array of items with `src` (image path in src/assets/images/)
- * and `label`. Each renders inside a clean phone frame.
+ * Inline: a horizontal strip of large, real-scale screenshots (no phone
+ * bezel — just the raw screen, like Mobbin's flow pages).
+ *
+ * Interaction: clicking any screen opens a full-screen lightbox with every
+ * screen in the flow laid out as a large horizontal filmstrip you can
+ * scroll through at real size, opening scrolled to the screen you clicked.
  *
  * Usage in MDX:
  *   <PhoneGallery items={[
@@ -23,42 +27,90 @@ interface PhoneItem {
 
 interface Props {
   items: PhoneItem[];
+  /** Title shown at the top-left of the fullscreen lightbox, Mobbin-style. */
+  flowTitle?: string;
 }
 
-const { items } = Astro.props;
+const { items, flowTitle } = Astro.props;
 
 const resolvedItems = await Promise.all(
   items.map(async (item) => {
     const imgData = await resolveImage(item.src);
     const optimized = imgData
-      ? (await getImage({ src: imgData, width: 390, format: "webp", quality: 90 })).src
+      ? (await getImage({ src: imgData, width: 520, format: "webp", quality: 92 })).src
       : undefined;
-    return { ...item, optimizedSrc: optimized };
+    const full = imgData
+      ? (await getImage({ src: imgData, width: 1000, format: "webp", quality: 95 })).src
+      : undefined;
+    return { ...item, optimizedSrc: optimized, fullSrc: full };
   })
 );
+
+// Unique id so multiple galleries on one page don't collide.
+const galleryId = `pg-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
-<div class="pg-section">
+<div class="pg-section" data-pg-id={galleryId}>
   <div class="pg-scroll">
     {resolvedItems.map((item, i) => (
-      <div class="pg-wrap">
-        {item.optimizedSrc ? (
-          <img
-            src={item.optimizedSrc}
-            alt={item.alt ?? item.label}
-            class="pg-screen"
-          />
-        ) : (
-          <div class="pg-placeholder">
-            <span>{item.label}</span>
-          </div>
-        )}
-        <p class="pg-label">
+      <button type="button" class="pg-wrap" data-pg-index={i} aria-label={`Open ${item.label} full size`}>
+        <span class="pg-screen-frame">
+          {item.optimizedSrc ? (
+            <img
+              src={item.optimizedSrc}
+              alt={item.alt ?? item.label}
+              class="pg-screen"
+              loading="lazy"
+            />
+          ) : (
+            <span class="pg-placeholder">
+              <span>{item.label}</span>
+            </span>
+          )}
+          <span class="pg-expand-hint" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+            </svg>
+          </span>
+        </span>
+        <span class="pg-label">
           <span class="pg-num">{String(i + 1).padStart(2, "0")}</span>
           {item.label}
-        </p>
-      </div>
+        </span>
+      </button>
     ))}
+  </div>
+
+  <!-- Fullscreen lightbox filmstrip -->
+  <div class="pg-modal" data-pg-modal role="dialog" aria-modal="true" aria-label={flowTitle ?? "Flow, full size"}>
+    <div class="pg-modal-bar">
+      {flowTitle && <span class="pg-modal-title">{flowTitle}</span>}
+      <span class="pg-modal-bar-right">
+        <span class="pg-modal-count" data-pg-count>01 / {resolvedItems.length}</span>
+        <button type="button" class="pg-modal-close" data-pg-close aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </span>
+    </div>
+    <div class="pg-modal-scroll" data-pg-modal-scroll>
+      {resolvedItems.map((item, i) => (
+        <figure class="pg-modal-item" data-pg-modal-index={i}>
+          {item.fullSrc ? (
+            <img src={item.fullSrc} alt={item.alt ?? item.label} class="pg-modal-img" />
+          ) : (
+            <span class="pg-placeholder pg-placeholder--modal">
+              <span>{item.label}</span>
+            </span>
+          )}
+          <figcaption class="pg-modal-label">
+            <span class="pg-num">{String(i + 1).padStart(2, "0")}</span>
+            {item.label}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
   </div>
 </div>
 
@@ -69,7 +121,7 @@ const resolvedItems = await Promise.all(
 
   .pg-scroll {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
     overflow-x: auto;
     padding: 0.75rem 0.25rem 1rem;
     scrollbar-width: none;
@@ -82,25 +134,78 @@ const resolvedItems = await Promise.all(
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.65rem;
     flex-shrink: 0;
     scroll-snap-align: start;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+
+  .pg-screen-frame {
+    position: relative;
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e4e4e7;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.03),
+      0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .pg-wrap:hover .pg-screen-frame,
+  .pg-wrap:focus-visible .pg-screen-frame {
+    transform: translateY(-3px);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.04),
+      0 14px 32px rgba(0, 0, 0, 0.09);
+  }
+
+  .pg-expand-hint {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(24, 24, 27, 0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    backdrop-filter: blur(2px);
+  }
+
+  .pg-wrap:hover .pg-expand-hint,
+  .pg-wrap:focus-visible .pg-expand-hint {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .pg-screen {
-    height: 320px;
+    height: 560px;
     width: auto;
     display: block;
-    border-radius: 8px;
+  }
+
+  @media (max-width: 900px) {
+    .pg-screen { height: 440px; }
   }
 
   @media (max-width: 640px) {
-    .pg-screen { height: 220px; }
+    .pg-screen { height: 340px; }
     .pg-scroll { padding-inline: 0.5rem; }
   }
 
   .pg-placeholder {
-    width: 160px;
+    width: 220px;
     aspect-ratio: 9/19.5;
     display: flex;
     align-items: center;
@@ -111,24 +216,224 @@ const resolvedItems = await Promise.all(
     letter-spacing: 0.06em;
     text-transform: uppercase;
     border: 1.5px dashed #ddd;
-    border-radius: 8px;
+    border-radius: 10px;
   }
 
   .pg-label {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
     color: var(--text-3, #999);
     font-family: 'Manrope', system-ui, sans-serif;
     text-align: center;
     white-space: nowrap;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.35rem;
   }
 
   .pg-num {
     font-weight: 700;
     color: var(--coral, #EF4623);
-    font-size: 0.6rem;
+    font-size: 0.62rem;
     letter-spacing: 0.04em;
   }
+
+  /* ── Lightbox ─────────────────────────────────────────────── */
+  .pg-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #f5f5f5;
+    display: none;
+    flex-direction: column;
+  }
+
+  .pg-modal.is-open {
+    display: flex;
+  }
+
+  .pg-modal-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid #e4e4e7;
+  }
+
+  .pg-modal-title {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #18181b;
+  }
+
+  .pg-modal-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-left: auto;
+  }
+
+  .pg-modal-count {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #71717a;
+  }
+
+  .pg-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    color: #18181b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .pg-modal-close:hover {
+    background: #ececec;
+  }
+
+  .pg-modal-scroll {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    overflow-x: auto;
+    padding: 0 8vw;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .pg-modal-scroll::-webkit-scrollbar { display: none; }
+
+  .pg-modal-item {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    scroll-snap-align: center;
+    margin: 0;
+  }
+
+  .pg-modal-img {
+    height: 84vh;
+    width: auto;
+    display: block;
+    border-radius: 14px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 20px 48px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 640px) {
+    .pg-modal-img { height: 72vh; }
+    .pg-modal-scroll { padding: 0 6vw; gap: 1.25rem; }
+  }
+
+  .pg-placeholder--modal {
+    height: 84vh;
+    width: auto;
+    aspect-ratio: 9/19.5;
+    border-radius: 14px;
+    border-color: #d4d4d8;
+    color: #a1a1aa;
+  }
+
+  .pg-modal-label {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 0.78rem;
+    color: #52525b;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
 </style>
+
+<script>
+  function initPhoneGalleries() {
+    document.querySelectorAll<HTMLElement>("[data-pg-id]").forEach((section) => {
+      if (section.dataset.pgInit === "true") return;
+      section.dataset.pgInit = "true";
+
+      const modal = section.querySelector<HTMLElement>("[data-pg-modal]");
+      const modalScroll = section.querySelector<HTMLElement>("[data-pg-modal-scroll]");
+      const closeBtn = section.querySelector<HTMLElement>("[data-pg-close]");
+      const countEl = section.querySelector<HTMLElement>("[data-pg-count]");
+      const triggers = Array.from(section.querySelectorAll<HTMLElement>("[data-pg-index]"));
+      const modalItems = Array.from(section.querySelectorAll<HTMLElement>("[data-pg-modal-index]"));
+      if (!modal || !modalScroll) return;
+
+      const total = modalItems.length;
+
+      function updateCount(index: number) {
+        if (countEl) {
+          countEl.textContent = `${String(index + 1).padStart(2, "0")} / ${total}`;
+        }
+      }
+
+      function openAt(index: number) {
+        modal!.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+        updateCount(index);
+        const target = modalItems[index];
+        if (target) {
+          // Jump instantly to the clicked screen (no smooth animation on open).
+          target.scrollIntoView({ inline: "center", block: "nearest", behavior: "auto" });
+        }
+      }
+
+      function closeModal() {
+        modal!.classList.remove("is-open");
+        document.body.style.overflow = "";
+      }
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener("click", () => {
+          const idx = Number(trigger.dataset.pgIndex ?? 0);
+          openAt(idx);
+        });
+      });
+
+      closeBtn?.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal!.classList.contains("is-open")) closeModal();
+      });
+
+      // Keep the counter in sync while the user scrolls the filmstrip.
+      let scrollTimeout: ReturnType<typeof setTimeout>;
+      modalScroll.addEventListener("scroll", () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          const scrollCenter = modalScroll.scrollLeft + modalScroll.clientWidth / 2;
+          let closestIndex = 0;
+          let closestDist = Infinity;
+          modalItems.forEach((item, i) => {
+            const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+            const dist = Math.abs(itemCenter - scrollCenter);
+            if (dist < closestDist) {
+              closestDist = dist;
+              closestIndex = i;
+            }
+          });
+          updateCount(closestIndex);
+        }, 100);
+      });
+    });
+  }
+
+  initPhoneGalleries();
+  document.addEventListener("astro:page-load", initPhoneGalleries);
+</script>

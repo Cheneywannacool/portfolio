@@ -29,12 +29,15 @@ metrics:
   - { value: "25%", label: "Increase in User Engagament", delta: "measured by DAU" }
   - { value: "#14", label: "Free Reference App", delta: "1 month post-launch in App Store " }
 
+reflectionTitle: "A masterclass in prioritization"
 reflection: "This project was a masterclass in prioritization. It's easy to get overwhelmed by a massive scope, but by letting data guide our focus (uncovering the Plan Tab bottleneck) and fixing our internal development processes, we let the quality of the work speak for itself ."
 
 url: "https://apps.apple.com/us/app/holy-bible-study-gods-word/id1666079454"
 ---
 
 import ImagePlaceholder from "../../components/case-study/ImagePlaceholder.astro";
+import DecisionList from "../../components/case-study/DecisionList.astro";
+import BeforeAfter from "../../components/case-study/BeforeAfter.astro";
 
 ## The Problem
 
@@ -44,7 +47,10 @@ The goal was to overhaul the app to boost retention and reading engagement, but 
 - **Usability Debt:** Core features like "Compare Verses" were functionally broken, with only 20% of users engaging with them due to confusing, non-standard navigation.
 
 
-> Instead of guessing, I used analytics to narrow our scope down to two primary MVP focus areas: **fixing the core reading experience** and **completely overhauling the "Plan" tab.** Simultaneously, I re-engineered our cross-functional delivery process to ensure design quality.
+<DecisionList items={[
+  { icon: "target", text: "Narrowed scope to two MVP focus areas: fixing the core reading experience and overhauling the Plan tab." },
+  { icon: "users", text: "Re-engineered the cross-functional delivery process to protect design quality." },
+]} />
 
 In addition, to solve a massive content bottleneck I found during investigation within the Plan tab, I designed an **AI-Automated Custom Plan Generator** guided by Google's People+AI framework. 
 
@@ -64,7 +70,15 @@ For Bible readers, comparing different translations is an essential, highly valu
 
 I restructured the information architecture. The new design focuses on a single selected verse, clearly labels the current version at the top, and allows users to toggle multiple translation versions simultaneously for direct, side-by-side comparison .
 
-<ImagePlaceholder src="/images/before-after.png" />
+<BeforeAfter
+  beforeLabel="Before"
+  beforeDesc="Comparing translations meant scanning entire chapters at once — failing to match the user's mental model for verse-level comparison."
+  beforeSrc="/images/biblebefore.png"
+  afterLabel="After"
+  afterDesc="A single selected verse, clearly labeled versions, and the ability to toggle multiple translations for direct, side-by-side comparison."
+  afterSrc="/images/bibleafter.png"
+  aspectRatio="4716/5112"
+/>
 
 ---
 
@@ -72,7 +86,9 @@ I restructured the information architecture. The new design focuses on a single 
 
 The previous data analysis also revealed a hidden opportunity: 45.2% of users interacted with the "Plan" Tab, making it the second most popular area for engagement . However, 19.4% of users abandoned the flow immediately after viewing a plan summary, indicating severe friction .
 
-> Making the Plan Tab our primary target for the MVP to boost retention.
+<DecisionList items={[
+  { icon: "target", text: "Made the Plan Tab our primary target for the MVP to boost retention." },
+]} />
 
 <ImagePlaceholder src="/images/narrow.png" />
 

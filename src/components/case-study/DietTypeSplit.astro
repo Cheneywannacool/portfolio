@@ -33,7 +33,9 @@ const beforeImageData = await resolveImage(beforeSrc);
 
   <!-- After: interactive prototype -->
   <div class="dts-panel dts-panel--after">
-    <DietTypePrototype />
+    <div class="dts-proto-fit">
+      <DietTypePrototype />
+    </div>
     <p class="dts-label dts-label--after">After →</p>
     <p class="dts-hint">✦ Working prototype — tap a tile to explore the redesigned flow</p>
   </div>
@@ -60,22 +62,61 @@ const beforeImageData = await resolveImage(beforeSrc);
     gap: 0.5rem;
   }
 
-  /* Before image — stretches to match prototype height */
-  .dts-media {
+  /*
+   * Both media boxes share a fixed, explicit height — NOT tied to
+   * whatever aspect ratio the before image happens to have. This keeps
+   * the before image safe from being zoomed/cropped by object-fit:cover
+   * (contain is used instead, so it always fits cleanly), and it gives
+   * the after box a real, definite size for the container-query-based
+   * phone scaling below to work reliably against.
+   */
+  .dts-media,
+  .dts-proto-fit {
     width: 100%;
+    height: 560px;
+  }
+
+  @media (max-width: 620px) {
+    .dts-media,
+    .dts-proto-fit {
+      height: 460px;
+    }
+  }
+
+  .dts-media {
     border-radius: 0.75rem;
     overflow: hidden;
     border: 1px solid #e4e4e7;
-    background: #fafafa;
+    background: #f5f5f5;
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.02),
       0 4px 12px rgba(0, 0, 0, 0.03),
       0 16px 32px rgba(0, 0, 0, 0.02);
   }
 
+  /* No background/border here — just fit the phone into the same
+     footprint as the before image's box. The actual scale is computed
+     and applied by JS below (measuring real pixels is 100% reliable,
+     unlike CSS container-query units which proved inconsistent here). */
+  .dts-proto-fit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .dts-proto-fit :global(.dtp-outer) {
+    margin: 0;
+  }
+
+  .dts-proto-fit :global(.dtp-phone) {
+    transform-origin: center center;
+  }
+
   .dts-img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
     display: block;
     margin: 0;
     border: none;
@@ -112,9 +153,34 @@ const beforeImageData = await resolveImage(beforeSrc);
     text-align: center;
     
   }
-
-  /* Strip the prototype's own outer margin so it sits flush */
-  .dts-panel--after :global(.dtp-outer) {
-    margin: 0;
-  }
 </style>
+
+<script>
+  // Measure the real rendered height of every .dts-proto-fit box and set
+  // the phone's transform:scale() directly in pixels — this is fully
+  // reliable, unlike CSS container-query units which don't establish a
+  // valid size context reliably in this grid/flex layout.
+  const PHONE_NATURAL_HEIGHT = 650;
+  // Leave a small safety margin so the phone's rounded corners never
+  // touch/clip against the container edge (matches the breathing room
+  // the "before" image box has).
+  const FIT_MARGIN = 0.86;
+
+  function fitDietTypePrototypes() {
+    document.querySelectorAll<HTMLElement>(".dts-proto-fit").forEach((container) => {
+      const phone = container.querySelector<HTMLElement>(".dtp-phone");
+      if (!phone) return;
+      const scale = (container.clientHeight / PHONE_NATURAL_HEIGHT) * FIT_MARGIN;
+      if (scale > 0 && Number.isFinite(scale)) {
+        phone.style.transform = `scale(${scale})`;
+      }
+    });
+  }
+
+  fitDietTypePrototypes();
+  window.addEventListener("resize", fitDietTypePrototypes);
+  document.addEventListener("astro:page-load", fitDietTypePrototypes);
+
+  // Also re-fit after fonts/images settle, in case initial layout shifts.
+  window.addEventListener("load", fitDietTypePrototypes);
+</script>

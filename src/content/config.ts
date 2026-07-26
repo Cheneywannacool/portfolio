@@ -50,6 +50,8 @@ const projects = defineCollection({
       .optional(),
 
     // ── Reflection ───────────────────────────────────────────────
+    /** Short summary of the reflection's core takeaway, shown as the title */
+    reflectionTitle: z.string().optional(),
     reflection: z.string().optional(),
 
     // ── Sidebar date cell (label + value) ───────────────────────

@@ -31,6 +31,7 @@ metrics:
   - { value: "5", label: "teams in align", delta: "on growth goals" }
 
 
+reflectionTitle: "Designing for scale"
 reflection: "This project shifted my approach to design. I now start thinking about overarching scalability rather than focusing on individual wins and immediate needs."
 
 url: "https://www.eetapps.com/"
@@ -41,6 +42,7 @@ import ImagePlaceholder from "../../components/case-study/ImagePlaceholder.astro
 import ExampleGrid    from "../../components/case-study/ExampleGrid.astro";
 import BeforeAfter    from "../../components/case-study/BeforeAfter.astro";
 import ABTestTabs     from "../../components/case-study/ABTestTabs.astro";
+import DecisionList   from "../../components/case-study/DecisionList.astro";
 
 ## The Constraint
 
@@ -50,7 +52,10 @@ The business needed to rapidly scale the portfolio, but we were bottlenecked. Ev
 * Align stakeholders across 5 distinct teams who had varying priorities.
 * Maintain or increase baseline start-trial conversions without adding overhead.
 
-> Instead of designing screens ad-hoc, I shifted the team to a **Standardized Design Framework**. I spearheaded alignment with the cross-functional teams to create a shared repository for A/B test wins and losses.
+<DecisionList items={[
+  { icon: "layers", text: "Shifted the team to a Standardized Design Framework instead of designing screens ad-hoc." },
+  { icon: "users", text: "Spearheaded alignment across cross-functional teams to build a shared repository of A/B test wins and losses." },
+]} />
 
 Having a standardized growth design framework could help solve the pain points since not only could it solve the immediate resource constraint but also builds long-term organizational capability for faster, more effective app development.
 
@@ -64,7 +69,9 @@ I first connected with `PM` and discussed the goals for activation: **Having a s
 * To reduce the time spent on building up new Onboarding flows for new apps.
 * Could served as the firm foundation for the team to start testing on different elements based on each App’s key features and working scenarios.
 
-> To reach the goals, I designed and rigorously A/B tested **a standardized 3-screen onboarding sequence** (Splash -> Social Proof -> Premium) .
+<DecisionList items={[
+  { icon: "layers", text: "Designed and rigorously A/B tested a standardized 3-screen onboarding sequence: Splash → Social Proof → Premium." },
+]} />
 
 ### Psychology-Driven Design
 
@@ -144,7 +151,9 @@ Using our AI Math Solver app as an example, instead of hitting users with a payw
 
 ### The Execution
 
-> **Using `Animation` + `Tactile Feedback`** to reinforce the motivation
+<DecisionList items={[
+  { icon: "check", text: "Used animation and tactile feedback to reinforce the user's motivation to upgrade." },
+]} />
 
 I collaborated with motion designers to create loading animations with visual and tactile feedback to reinforce the user's motivation to upgrade before the pitch. This framework boosted the In-App Start Trial Rate from **6.15% to 7.01%** on the Math app. It also brings around **41%** increase in In-App Start Trial Rate across the board.
 

@@ -1,0 +1,98 @@
+---
+/**
+ * ImagePair — two images shown side-by-side in matching Vercel-sandbox-style
+ * frames (same visual treatment as ImagePlaceholder). Use inside MDX when a
+ * single screenshot needs a left/right counterpart instead of a solo image.
+ */
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface Props {
+  left: string;
+  right: string;
+  leftAlt?: string;
+  rightAlt?: string;
+}
+
+const { left, right, leftAlt, rightAlt } = Astro.props;
+const leftData = await resolveImage(left);
+const rightData = await resolveImage(right);
+---
+
+<div class="img-pair">
+  <figure class="img-pair-item img-pair-item--left">
+    {leftData ? (
+      <Image
+        src={leftData}
+        alt={leftAlt ?? "Screenshot"}
+        widths={[600, 1200, 1800]}
+        sizes="(max-width: 700px) 100vw, 50vw"
+        format="png"
+        quality={100}
+        style="width:100%;height:100%;display:block;object-fit:contain;"
+      />
+    ) : (
+      <img src={left} alt={leftAlt ?? "Screenshot"} style="width:100%;height:100%;display:block;object-fit:contain;" />
+    )}
+  </figure>
+  <figure class="img-pair-item img-pair-item--right">
+    {rightData ? (
+      <Image
+        src={rightData}
+        alt={rightAlt ?? "Screenshot"}
+        widths={[600, 1200, 1800]}
+        sizes="(max-width: 700px) 100vw, 50vw"
+        format="png"
+        quality={100}
+        style="width:100%;height:100%;display:block;object-fit:cover;"
+      />
+    ) : (
+      <img src={right} alt={rightAlt ?? "Screenshot"} style="width:100%;height:100%;display:block;object-fit:cover;" />
+    )}
+  </figure>
+</div>
+
+<style>
+  .img-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 620px) {
+    .img-pair {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Same frame treatment as ImagePlaceholder's Vercel-sandbox-style box.
+     Both panels share a fixed, equal height — so the wider/flatter "right"
+     image (object-fit: cover) fills the box completely with no background
+     gap, while the "left" image (object-fit: contain) is never cropped. */
+  .img-pair-item {
+    margin: 0;
+    height: 380px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid #e4e4e7;
+    background-color: #fafafa;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03),
+      0 16px 32px rgba(0, 0, 0, 0.02);
+  }
+
+  @media (max-width: 620px) {
+    .img-pair-item {
+      height: 300px;
+    }
+  }
+
+  .img-pair-item :global(img) {
+    display: block;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+</style>

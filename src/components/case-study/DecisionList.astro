@@ -1,0 +1,97 @@
+---
+/**
+ * DecisionList — "→ Decision" callout, restyled as a clean bulleted card
+ * (icon + short point per row, divided by hairlines) instead of a quote block.
+ *
+ * Usage in MDX:
+ *   <DecisionList items={[
+ *     { icon: "target", text: "..." },
+ *     { icon: "flask", text: "..." },
+ *   ]} />
+ */
+
+interface DecisionItem {
+  icon: "target" | "flask" | "users" | "layers" | "check";
+  text: string;
+}
+
+interface Props {
+  items: DecisionItem[];
+  label?: string;
+}
+
+const { items, label = "Decision" } = Astro.props;
+
+const ICONS: Record<DecisionItem["icon"], string> = {
+  target: `<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>`,
+  flask: `<path d="M9 2v6.5L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L15 8.5V2"/><path d="M8.5 2h7"/><path d="M6.5 15h11"/>`,
+  users: `<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>`,
+  layers: `<path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>`,
+  check: `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`,
+};
+---
+
+<div class="decision-wrap">
+  <span class="decision-label">→ {label}</span>
+  <div class="decision-card">
+    {items.map((item, i) => (
+      <div class="decision-row">
+        <svg class="decision-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[item.icon]} />
+        <p class="decision-text">{item.text}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .decision-wrap {
+    margin: 1.75rem 0;
+  }
+
+  .decision-label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 0.75rem;
+  }
+
+  .decision-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  .decision-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1.05rem 1.375rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .decision-row:last-child {
+    border-bottom: none;
+  }
+
+  .decision-icon {
+    color: var(--coral);
+    flex-shrink: 0;
+  }
+
+  .decision-text {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--text);
+    margin: 0 !important;
+  }
+</style>
