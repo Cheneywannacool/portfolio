@@ -37,6 +37,17 @@ const projects = defineCollection({
     revealGallery: z
       .array(z.object({ src: z.string(), label: z.string() }))
       .optional(),
+    /** Optional horizontally auto-scrolling row of image cards, shown instead of a single reveal image */
+    revealCards: z
+      .array(
+        z.object({
+          src: z.string(),
+          title: z.string(),
+          description: z.string(),
+          alt: z.string().optional(),
+        })
+      )
+      .optional(),
 
     // ── Impact ───────────────────────────────────────────────────
     metrics: z

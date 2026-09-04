@@ -4,18 +4,24 @@
  * Designers shouldn't make readers scroll to the bottom to see the work.
  */
 import PhoneGallery from "./PhoneGallery.astro";
+import ScrollingCards from "./ScrollingCards.astro";
 
 interface GalleryItem { src: string; label: string; }
+interface CardItem { src: string; title: string; description: string; alt?: string; }
 
 interface Props {
   reveal?: string;
   revealCaption?: string;
   revealGallery?: GalleryItem[];
+  revealCards?: CardItem[];
   title: string;
 }
 
-const { reveal, revealCaption, revealGallery, title } = Astro.props;
-if (!reveal && !revealGallery?.length) return;
+const { reveal, revealCaption, revealGallery, revealCards, title } = Astro.props;
+const solutionKicker = revealCards?.length
+  ? "Design system foundation"
+  : "Final high-fidelity design";
+if (!reveal && !revealGallery?.length && !revealCards?.length) return;
 ---
 
 <section style="
@@ -56,12 +62,14 @@ if (!reveal && !revealGallery?.length) return;
       font-weight: 300;
       color: var(--text-3);
       
-    ">Final high-fidelity design</p>
+    ">{solutionKicker}</p>
   </div>
 
-  <!-- Gallery (phone screens) or single image -->
+  <!-- Scrolling cards, gallery (phone screens), or single image -->
   <div style="position:relative;">
-    {revealGallery?.length ? (
+    {revealCards?.length ? (
+      <ScrollingCards items={revealCards} />
+    ) : revealGallery?.length ? (
       <PhoneGallery items={revealGallery} />
     ) : (
       <div style="

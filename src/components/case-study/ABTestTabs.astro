@@ -32,7 +32,7 @@ const resolved = await Promise.all(
 );
 ---
 
-<div class="abt-wrap" id="abtWrap">
+<div class="abt-wrap">
 
   <!-- Left: tabs -->
   <div class="abt-tabs" role="tablist">
@@ -42,7 +42,6 @@ const resolved = await Promise.all(
         role="tab"
         aria-selected={i === 0 ? "true" : "false"}
         data-index={i}
-        onmousedown="this.blur()"
       >
         <!-- Inactive row -->
         <span class="abt-inactive-row">
@@ -104,7 +103,7 @@ const resolved = await Promise.all(
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>("#abtWrap").forEach((wrap) => {
+  document.querySelectorAll<HTMLElement>(".abt-wrap").forEach((wrap) => {
     const tabs   = wrap.querySelectorAll<HTMLElement>(".abt-tab");
     const panels = wrap.querySelectorAll<HTMLElement>(".abt-panel");
     tabs.forEach((tab) => {
@@ -130,7 +129,7 @@ const resolved = await Promise.all(
     margin: 2.5rem -1rem;
     padding: 2.5rem 3.5rem;
     border-radius: 2rem;
-    background: #f5f5f5;
+    background: var(--showcase-bg);
   }
 
   @media (max-width: 700px) {
@@ -205,7 +204,7 @@ const resolved = await Promise.all(
 
   /* Active state */
   .abt-tab--active {
-    background: #fff;
+    background: var(--showcase-elevated);
     border-color: transparent;
     border-radius: 1.1rem;
     padding: 1rem 1.125rem;
@@ -253,7 +252,7 @@ const resolved = await Promise.all(
   .abt-img-label {
     font-size: 0.78rem;
     font-weight: 500;
-    color: #555;
+    color: var(--text-2);
     letter-spacing: 0.03em;
     margin: 0 0 4px;
   }
@@ -271,11 +270,9 @@ const resolved = await Promise.all(
   .abt-imgs--single .abt-img-col { max-width: 320px; }
   .abt-imgs--single .abt-img { max-height: 600px; width: auto; }
 
-  /* Prevent any global focus ring on these buttons */
-  .abt-tab:focus,
   .abt-tab:focus-visible {
-    outline: none !important;
-    box-shadow: none !important;
+    outline: 2px solid var(--coral);
+    outline-offset: 3px;
   }
 
   .abt-placeholder {
@@ -288,13 +285,5 @@ const resolved = await Promise.all(
     gap: 0.5rem; color: var(--coral); opacity: 0.5;
     font-size: 0.65rem; font-weight: 700;
     letter-spacing: 0.1em; text-transform: uppercase;
-  }
-</style>
-
-<style is:global>
-  .abt-tab:focus,
-  .abt-tab:focus-visible {
-    outline: none !important;
-    box-shadow: none !important;
   }
 </style>

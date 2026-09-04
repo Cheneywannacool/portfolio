@@ -1,0 +1,257 @@
+---
+title: "Making Hiya's Mobile Design System AI-Native"
+description: "An AI-native mobile design system with semantic tokens, shared components, and migration guardrails across Android and iOS."
+date: 2026-03-01
+tags: ["Design Systems", "AI-Augmented Workflows", "Cross-Platform Engineering", "Accessibility"]
+cover: "/images/hiya_cover.png"
+featured: true
+
+problem: "Hiya's mobile design system was still Figma-first. Styles were named by literal value instead of purpose, so every theming change meant auditing components by hand.
+
+It needed a machine-readable structure that designers, engineers, and AI agents could all build from."
+result: "0 → 1"
+resultLabel: "An upgraded, AI-native design system built beyond Figma"
+resultContext: "Semantic tokens, shared components, agent-ready docs, and guardrails designers and engineers can use together"
+
+role: "Design System Owner"
+timeline: "March 2026 – Present"
+team:
+  - { role: "Design" }
+  - { role: "Engineering" }
+
+holder: "Company"
+holderValue: "Hiya"
+
+url: "https://www.hiya.com/"
+
+metrics:
+  - { value: "0 → 1", label: "AI-native design system foundation", delta: "A token model, component docs, and build workflow from scratch" }
+  - { value: "4", label: "Native codebases aligned", delta: "Work Phone and Spam Blocker across Android and iOS" }
+  - { value: "70%", label: "Legacy styling debt resolved", delta: "Measured with token guardrails instead of manual audits" }
+
+reflectionTitle: "Own the system, not just the screen"
+reflection: "Owning both the design and code side of this migration taught me that designing for scale is a different discipline than designing a single screen — every decision has to hold up across platforms, teams, and components I'll never personally touch again. The token architecture and the enforcement guard matter more than any one screen, because they keep future decisions consistent without me in the room."
+
+revealCaption: "A rebuilt foundation: brand, color, type, materials, components, and the AI layer that reads and writes to all of it."
+revealCards:
+  - { src: "/images/ds-imagecards/brand.png", title: "Brand", description: "Hiya's icon mark and wordmark, with usage variants for light and dark surfaces." }
+  - { src: "/images/ds-imagecards/Color.png", title: "Color", description: "A semantic color system mapped from primitive value to purpose-bound token." }
+  - { src: "/images/ds-imagecards/typeface.png", title: "Typeface", description: "SF Pro Display for headings, SF Pro Text for body — one type ramp across both platforms." }
+  - { src: "/images/ds-imagecards/Materials.png", title: "Materials", description: "Elevation and shadow tiers for cards, sheets, toasts, and floating surfaces." }
+  - { src: "/images/ds-imagecards/icons.png", title: "Icons", description: "A unified icon set covering calling, messaging, and voice-detection states." }
+  - { src: "/images/ds-imagecards/components.png", title: "Components", description: "Shared building blocks powering both the Work Phone and Spam Blocker apps." }
+  - { src: "/images/ds-imagecards/code-moves-closer-to-design.png", title: "Code Layers", description: "Design, token, and code share one naming and status contract." }
+  - { src: "/images/ds-imagecards/context.png", title: "AI Context", description: "Rules, limits, and docs that an AI workflow reads as ground truth." }
+---
+
+import ImagePlaceholder from "../../components/case-study/ImagePlaceholder.astro";
+import DecisionList from "../../components/case-study/DecisionList.astro";
+import CommandCards from "../../components/case-study/CommandCards.astro";
+import ChangelogSplit from "../../components/case-study/ChangelogSplit.astro";
+import ABTestTabs from "../../components/case-study/ABTestTabs.astro";
+import LegacyTokenTrend from "../../components/case-study/LegacyTokenTrend.astro";
+import MigrationProcessDiagram from "../../components/case-study/MigrationProcessDiagram.astro";
+import TokenGrammarBeforeAfter from "../../components/case-study/TokenGrammarBeforeAfter.astro";
+
+## Why the Rebuild Mattered
+
+This was more than a naming cleanup. Hiya's design system needed to become a shared operating model for designers, engineers, and AI-assisted build workflows. As sole owner of the Figma library and both native codebases:
+
+- Theme updates like dark mode and contrast fixes required manual component audits instead of one token-level change.
+- Many components were designed for a single screen instead of built as reusable system primitives.
+- Android and iOS needed to feel consistent while still respecting each platform's native patterns.
+- With no dedicated engineering support, maintaining components across two codebases was not sustainable.
+- The system served two product teams, Work Phone and Spam Blocker, with four codebases pulling from one source of truth.
+
+---
+
+## Token Architecture as Product Strategy
+
+The first upgrade was the token model. I replaced flat, value-based styles with three clear layers:
+
+- **Primitive tokens** store raw values like color, spacing, radius, type, and elevation.
+- **Semantic tokens** describe intent, such as surface, text, border, and interaction states.
+- **Component tokens** give engineers stable names to use directly in code.
+
+That changed the system from a visual library into an implementation contract. Designers could still work in Figma, but the decisions were now structured enough for code, documentation, and AI-assisted workflows to read the same source of truth.
+
+<TokenGrammarBeforeAfter
+  beforeLabel="Before"
+  beforeSrc="/images/hiya-ds/token_structure_before.png"
+  afterLabel="After"
+/>
+
+**One token, two values.** Each semantic token owns both its light and dark value, so engineers do not have to write conditional theme logic. When a dark-mode value failed in context, the fix was to correct the token globally or add a new semantic token with the right purpose.
+
+**Built to extend, not prescribe.** Components use Figma variants and slots so they can flex across contexts instead of being rebuilt for each screen.
+
+<ImagePlaceholder src="/images/hiya-ds/token.png" alt="Token architecture: a raw color value resolves to a primitive token, then a semantic token, shown alongside the resulting text color token table" aspectRatio="16/9" />
+
+### Structure for an AI-Native System
+
+The second upgrade was making the system legible outside the design file. Tokens, components, usage rules, and generated code needed to live in a structure an engineer or AI agent could navigate without guessing.
+
+I organized the package around predictable layers: token definitions, primitive building blocks, component APIs, examples, and platform-specific implementation notes. That structure lets an agent answer practical questions before generating code: which token should be used, which component already exists, what variants are allowed, and where platform behavior needs to diverge.
+
+The goal was not to let AI invent UI faster. It was to make the design system strict enough that AI-assisted work stays inside the same decisions a designer or engineer would use.
+
+<ImagePlaceholder src="/images/hiya-ds/ds-structure.png" alt="The design system package structure" aspectRatio="5756/4292" />
+
+---
+
+## An AI-Augmented Build Pipeline
+
+Owning the design system alone meant I needed a build process that could scale with the library. Manual component authoring across Android and iOS was too slow, and one-off AI output was too risky without clear system rules.
+
+<DecisionList items={[
+  { icon: "layers", text: "Built custom /create-component and /build-feature skills around the design system's own files. Components.csv and Token.json became the source of truth for names, variants, and approved styling decisions." },
+  { icon: "check", text: "Used the same workflow for Android and iOS, with separate generation paths for Kotlin, Jetpack Compose, and Swift. Shared definitions kept the design language aligned while platform-specific code stayed native." },
+]} />
+
+I treated generation like migration work, not a magic button. Tokens came first, then primitive building blocks, then the remaining components in small, reviewable batches. Smaller passes made the output easier to validate and kept mistakes from spreading through the system.
+
+<CommandCards items={[
+  { command: "/create-component RatingCard", src: "/images/hiya-ds/create-component.png", alt: "/create-component skill process (scaffold → resolve tokens → add previews → ready to use) and its generated output file tree", aspectRatio: "4788/2936" },
+  { command: "/build-feature CallHistory", src: "/images/hiya-ds/build-feature.png", alt: "/build-feature skill process (compositional recipes → anti-slop protocol → accountability gates → review loop) and its generated CallHistory screen output", aspectRatio: "4788/2936" },
+]} />
+
+The skills help with authoring new components. The larger goal is different: make the finished system readable enough that an agent can use the existing library, follow its constraints, and produce UI that still feels like Hiya.
+
+<ImagePlaceholder src="/images/hiya-ds/ai-readable.png" alt="Component documentation (API, instance variants, usage examples, AI rules, and token mapping) feeding an AI agent, which outputs a working SwiftUI implementation using the documented DS components" aspectRatio="8284/4100" />
+
+---
+
+## Cross-Platform Consistency (Android + iOS)
+
+Android and iOS should feel like the same product, but they should not pretend to be the same platform. The design system needed one shared language for intent, with enough flexibility for each implementation to stay native.
+
+<DecisionList items={[
+  { icon: "layers", text: "Kept Figma as the shared source of truth and marked Android-specific variants directly in the library. Platform differences stayed visible without splitting the design language into separate systems." },
+]} />
+
+### Process
+
+Figma is the system of record. Updates start there, then move into platform implementation, PR review, and release. Android and iOS can ship on different version numbers because their release paths are different, but the design contract stays aligned.
+
+The v1.2.0 migration to Material Symbols is a good example. It simplified the iOS icon set and moved both platforms toward the same icon language, reducing the amount of manual alignment work between teams.
+
+<ABTestTabs tabs={[
+  {
+    label: "iOS",
+    description: "The native call screen in light and dark mode, both driven by the same semantic tokens.",
+    srcs: ["/images/hiya-ds/ioswhite.png", "/images/hiya-ds/iosblack.png"],
+    imageLabels: ["Light", "Dark"],
+  },
+  {
+    label: "Android",
+    description: "The same call experience adapted for Android conventions in light and dark mode.",
+    srcs: ["/images/hiya-ds/androidwhite.png", "/images/hiya-ds/androidblack.png"],
+    imageLabels: ["Light", "Dark"],
+  },
+]} />
+
+---
+
+## Migration Process: Legacy to Semantic Tokens
+
+The migration had two very different starting points. Spam Blocker could start fresh on the new semantic system. Work Phone already had years of legacy styling, so the work had to be staged, measurable, and safe to repeat.
+
+The first track was token adoption:
+
+1. **Integrate the new DS package** and replace the legacy `HiyaColor` alias table as the styling source.
+2. **Run `ds-token-guard.sh`** to establish a baseline of remaining legacy values.
+3. **Rebuild one flow at a time** so each change could be reviewed in context.
+4. **Run the guard again** after each flow or batch to confirm progress and prevent regressions.
+
+<MigrationProcessDiagram />
+
+This made the app speak the design system's token language, but it did not mean the app had fully adopted the component library. A codebase check found only one DS package component in use: `DSKeypad`, across 3 sites. Everything else still lived as local components such as `PrimaryButton`, `InfoCard`, `MetricTile`, and `ToastView`.
+
+That distinction matters. Token migration is fast and largely automatable. Hundreds of styling swaps can happen through scripts and targeted review. Component adoption is slower because each local component has product behavior, edge cases, and screen-level dependencies.
+
+I kept those tracks separate on purpose. Token adoption improves visual consistency now and gives the guard something concrete to enforce. Component adoption can then happen screen by screen, starting with a gap audit that maps each local component to a DS equivalent or identifies what the system still needs.
+
+The changelog shows how the migration moved from tokens to icons to drift cleanup:
+
+<ChangelogSplit
+  entries={[
+    {
+      version: "1.1.0",
+      title: "Accessibility-driven token migration",
+      sections: [
+        {
+          label: "Changed",
+          items: [
+            "14 light-mode and 6 dark-mode semantic color tokens remapped to meet WCAG AA contrast, each with documented before and after values such as `textCritical`: `#DE3333` → `#CC2424`.",
+          ],
+        },
+      ],
+    },
+    {
+      version: "1.2.0",
+      title: "Icon system migration to Material Symbols",
+      sections: [
+        {
+          label: "Changed",
+          items: [
+            "Replaced the legacy custom icon set with Material Symbols for cross-platform consistency.",
+          ],
+        },
+        {
+          label: "Removed",
+          items: [
+            "43 legacy icons retired with an explicit old-to-new mapping table. Custom call-state icons such as `incoming`, `missed`, and `blocked` were preserved.",
+          ],
+        },
+      ],
+    },
+    {
+      version: "1.5.0",
+      title: "Full icon system regeneration",
+      sections: [
+        {
+          label: "Added",
+          items: [
+            "417 new `DS.Icons` cases regenerated from the asset catalog, closing a drift gap between code references and real icon assets.",
+          ],
+        },
+        {
+          label: "Fixed",
+          items: [
+            "Two live bugs surfaced through the drift audit: blank icons in an avatar **Blocked** state and a keypad speakerphone toggle.",
+          ],
+        },
+        {
+          label: "Removed / Renamed",
+          items: [
+            "41 cases renamed for Material Symbols alignment, with 9 unused cases removed.",
+          ],
+        },
+      ],
+    },
+  ]}
+/>
+
+Legacy names were retired with explicit replacement mappings in the changelog, so engineers had a clear path through each breaking change.
+
+<LegacyTokenTrend />
+
+---
+
+## Adherence & Governance
+
+A token migration only works if the system can keep itself clean after the first pass. I added guardrails that made legacy styling visible, reviewable, and harder to reintroduce.
+
+A CI-gating shell script (`ds-token-guard.sh`) scans for four regression vectors: retired `HiyaColor` aliases, system fonts that bypass `DS.Typography`, undocumented `HiyaPalette` anchors, and raw `Color(hex:)` calls outside the palette file. The check is deterministic static analysis, which is the right tool for enforcement. AI helps with authoring and migration; the guard keeps the rules from drifting.
+
+<ImagePlaceholder src="/images/hiya-ds/deepdive5.png" alt="The docs/ds-token-asks-for-design.md decision ledger — each flagged site resolved as either a real gap (add a token upstream) or a blessed exception — alongside a real PR comment sweeping the Typography category" aspectRatio="7596/3168" />
+
+Every flagged site carries a `// FLAG:` comment and is logged to a running decision document (`docs/ds-token-asks-for-design.md`). Each item resolves as either a new upstream token or a documented exception. That gave engineering a normal PR workflow while keeping each design decision owned and traceable.
+
+---
+
+## Collaboration & Alignment
+
+As the sole design system owner, I owned the architecture, token model, and migration rules directly. Component and visual decisions were shaped with design peers, then moved through the same PR review process as product code. Because the org was already moving toward AI-native workflows, a codified and versioned DS repo gave design and engineering a shared place to align.
+
+<ImagePlaceholder src="/images/hiya-ds/collab.png" alt="Collaboration and alignment across design and engineering" aspectRatio="6640/3168" />

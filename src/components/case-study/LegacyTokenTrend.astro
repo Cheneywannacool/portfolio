@@ -1,0 +1,248 @@
+---
+const points = [
+  { label: "Initial", value: 558 },
+  { label: "v1.0", value: 179 },
+  { label: "v1.1", value: 121 },
+  { label: "vNext", value: 0 },
+];
+
+const maxValue = 600;
+const chartWidth = 1000;
+const chartHeight = 300;
+const padX = 34;
+const padTop = 34;
+const padBottom = 34;
+const plotWidth = chartWidth - padX * 2;
+const plotHeight = chartHeight - padTop - padBottom;
+
+const coords = points.map((point, index) => {
+  const x = padX + (plotWidth / (points.length - 1)) * index;
+  const y = padTop + plotHeight - (point.value / maxValue) * plotHeight;
+  return { ...point, x, y };
+});
+
+const path = coords
+  .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+  .join(" ");
+
+const areaPath = `${path} L ${coords.at(-1)!.x} ${padTop + plotHeight} L ${coords[0].x} ${padTop + plotHeight} Z`;
+---
+
+<figure id="legacy-token-trend" class="legacy-chart" aria-labelledby="legacy-chart-title">
+  <div class="legacy-chart__header">
+    <div>
+      <h3 id="legacy-chart-title">Legacy Tokens Remaining</h3>
+      <p>
+        Flagged legacy tokens across token checks
+        <span class="legacy-chart__summary" aria-label="70 percent of legacy styling debt resolved">
+          70% resolved
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <div class="legacy-chart__canvas">
+    <svg
+      viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+      role="img"
+      aria-label="Legacy token flags dropped from 558 initially to 179 in v1.0, 121 in v1.1, and 0 planned for vNext."
+    >
+      <defs>
+        <linearGradient id="legacy-area" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#6f35ff" stop-opacity="0.18"></stop>
+          <stop offset="100%" stop-color="#6f35ff" stop-opacity="0.03"></stop>
+        </linearGradient>
+      </defs>
+
+      <line class="legacy-chart__grid" x1={padX} x2={chartWidth - padX} y1={padTop} y2={padTop}></line>
+      <line class="legacy-chart__grid" x1={padX} x2={chartWidth - padX} y1={padTop + plotHeight / 2} y2={padTop + plotHeight / 2}></line>
+      <line class="legacy-chart__grid" x1={padX} x2={chartWidth - padX} y1={padTop + plotHeight} y2={padTop + plotHeight}></line>
+
+      <path class="legacy-chart__area" d={areaPath}></path>
+      <path class="legacy-chart__line" d={path}></path>
+
+      {coords.map((point, index) => (
+        <g class="legacy-chart__point" style={`--delay:${index * 180 + 450}ms;`}>
+          <circle cx={point.x} cy={point.y} r="5.5"></circle>
+          <text
+            x={point.x}
+            y={point.value === 0 ? point.y - 12 : point.y - 16}
+            text-anchor={index === 0 ? "start" : index === coords.length - 1 ? "end" : "middle"}
+          >
+            {point.value}
+          </text>
+        </g>
+      ))}
+    </svg>
+
+    <div class="legacy-chart__axis" aria-hidden="true">
+      {points.map((point) => <span>{point.label}</span>)}
+    </div>
+  </div>
+</figure>
+
+<style>
+  .legacy-chart {
+    margin: 1.75rem 0 2.25rem;
+    padding: 0;
+  }
+
+  .legacy-chart__header {
+    margin-bottom: 1.2rem;
+  }
+
+  .legacy-chart h3 {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    font-weight: 750;
+    line-height: 1.05;
+    letter-spacing: 0;
+    color: var(--text);
+    text-transform: none;
+  }
+
+  .legacy-chart p {
+    margin: 0.18rem 0 0;
+    color: var(--text-2);
+    font-size: clamp(0.78rem, 1.6vw, 0.88rem);
+    line-height: 1.4;
+  }
+
+  .legacy-chart__summary {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.45rem;
+    padding: 0.12rem 0.45rem 0.14rem;
+    border: 1px solid color-mix(in srgb, #6f35ff 22%, var(--border));
+    border-radius: 999px;
+    background: color-mix(in srgb, #6f35ff 8%, var(--showcase-elevated));
+    color: #6f35ff;
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .legacy-chart__canvas {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--showcase-elevated);
+    padding: 0.85rem 0.85rem 0.75rem;
+    overflow: hidden;
+  }
+
+  .legacy-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .legacy-chart__grid {
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+
+  .legacy-chart__area {
+    fill: url("#legacy-area");
+    opacity: 0;
+    animation: legacy-fade 600ms ease 420ms forwards;
+  }
+
+  .legacy-chart__line {
+    fill: none;
+    stroke: #6f35ff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 5;
+    stroke-dasharray: 1300;
+    stroke-dashoffset: 1300;
+    animation: legacy-draw 1100ms cubic-bezier(0.16, 1, 0.3, 1) 160ms forwards;
+  }
+
+  .legacy-chart__point {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.75);
+    animation: legacy-point 360ms cubic-bezier(0.16, 1, 0.3, 1) var(--delay) forwards;
+  }
+
+  .legacy-chart__point circle {
+    fill: var(--showcase-elevated);
+    stroke: #6f35ff;
+    stroke-width: 4;
+  }
+
+  .legacy-chart__point text {
+    fill: #6f35ff;
+    font-family: var(--font-sans);
+    font-size: 25px;
+    font-weight: 850;
+  }
+
+  .legacy-chart__axis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    padding: 0 0.35rem;
+    color: var(--text-3);
+    font-size: clamp(0.75rem, 1.7vw, 0.9rem);
+    font-weight: 650;
+  }
+
+  .legacy-chart__axis span:nth-child(1) {
+    text-align: left;
+  }
+
+  .legacy-chart__axis span:nth-child(2),
+  .legacy-chart__axis span:nth-child(3) {
+    text-align: center;
+  }
+
+  .legacy-chart__axis span:nth-child(4) {
+    text-align: right;
+  }
+
+  @keyframes legacy-draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes legacy-fade {
+    to { opacity: 1; }
+  }
+
+  @keyframes legacy-point {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (max-width: 620px) {
+    .legacy-chart__summary {
+      margin-left: 0;
+      margin-top: 0.35rem;
+    }
+
+    .legacy-chart__canvas {
+      padding: 0.7rem 0.5rem 0.65rem;
+    }
+
+    .legacy-chart__point text {
+      font-size: 31px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .legacy-chart__area,
+    .legacy-chart__line,
+    .legacy-chart__point {
+      animation: none;
+      opacity: 1;
+      stroke-dashoffset: 0;
+      transform: none;
+    }
+  }
+</style>

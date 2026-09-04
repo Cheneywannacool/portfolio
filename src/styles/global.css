@@ -25,6 +25,8 @@
   --bg-alt:     #FDF1EE;
   --card:       #FFFFFF;
   --card-hover: #FFFAF9;
+  --showcase-bg: #F7F7F8;
+  --showcase-elevated: #FFFFFF;
 
   /* Text */
   --text:       #2D3B42;
@@ -57,6 +59,8 @@
   --bg-alt:     rgba(239, 70, 35, 0.04);
   --card:       #243038;
   --card-hover: #2A3840;
+  --showcase-bg: #202B31;
+  --showcase-elevated: #2A3840;
 
   --text:       #F5EDE8;
   --text-2:     #BBADA7;

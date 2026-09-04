@@ -150,7 +150,7 @@ const galleryId = `pg-${Math.random().toString(36).slice(2, 9)}`;
     display: block;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #e4e4e7;
+    border: 1px solid var(--border);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.03),
       0 8px 20px rgba(0, 0, 0, 0.05);
@@ -242,7 +242,7 @@ const galleryId = `pg-${Math.random().toString(36).slice(2, 9)}`;
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: #f5f5f5;
+    background: var(--showcase-bg);
     display: none;
     flex-direction: column;
   }
@@ -257,7 +257,7 @@ const galleryId = `pg-${Math.random().toString(36).slice(2, 9)}`;
     align-items: center;
     justify-content: space-between;
     padding: 1.1rem 1.5rem;
-    border-bottom: 1px solid #e4e4e7;
+    border-bottom: 1px solid var(--border);
   }
 
   .pg-modal-title {
@@ -265,7 +265,7 @@ const galleryId = `pg-${Math.random().toString(36).slice(2, 9)}`;
     font-size: 0.95rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: #18181b;
+    color: var(--text);
   }
 
   .pg-modal-bar-right {
@@ -280,16 +280,16 @@ const galleryId = `pg-${Math.random().toString(36).slice(2, 9)}`;
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.04em;
-    color: #71717a;
+    color: var(--text-3);
   }
 
   .pg-modal-close {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #fff;
-    border: 1px solid #e4e4e7;
-    color: #18181b;
+    background: var(--showcase-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,7 +298,7 @@ const galleryId = `pg-${Math.random().toString(36).slice(2, 9)}`;
   }
 
   .pg-modal-close:hover {
-    background: #ececec;
+    background: var(--card-hover);
   }
 
   .pg-modal-scroll {

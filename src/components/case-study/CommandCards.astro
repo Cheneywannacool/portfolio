@@ -1,0 +1,179 @@
+---
+/**
+ * CommandCards — a row of terminal-style cards, each showing a slash
+ * command up top (styling only, no working copy button) and the
+ * resulting process/output image below.
+ *
+ * Usage in MDX:
+ *   <CommandCards items={[
+ *     { command: "/create-component RatingCard", src: "/images/foo.png" },
+ *     { command: "/build-feature ProfileHeader" }, // no src yet -> placeholder
+ *   ]} />
+ */
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface CommandItem {
+  /** Full command string, e.g. "/create-component RatingCard" */
+  command: string;
+  /** Path to the process/output image, e.g. "/images/foo.png" */
+  src?: string;
+  alt?: string;
+  /** Aspect ratio for the image area, defaults to "4/3" */
+  aspectRatio?: string;
+}
+
+interface Props {
+  items: CommandItem[];
+}
+
+const { items } = Astro.props;
+
+const resolvedItems = await Promise.all(
+  items.map(async (item) => {
+    const spaceIdx = item.command.indexOf(" ");
+    const cmdToken = spaceIdx === -1 ? item.command : item.command.slice(0, spaceIdx);
+    const cmdRest = spaceIdx === -1 ? "" : item.command.slice(spaceIdx);
+    return {
+      ...item,
+      cmdToken,
+      cmdRest,
+      imageData: await resolveImage(item.src),
+    };
+  })
+);
+---
+
+<div class="cc-grid">
+  {resolvedItems.map((item) => (
+    <div class="cc-card">
+      <!-- Command line -->
+      <div class="cc-cmdline">
+        <span class="cc-prompt">$</span>
+        <span class="cc-cmd"><span class="cc-cmd-token">{item.cmdToken}</span>{item.cmdRest}</span>
+      </div>
+
+      <!-- Process / output image -->
+      <div class="cc-img-wrap" style={`aspect-ratio:${item.aspectRatio ?? "4/3"};`}>
+        {item.imageData ? (
+          <Image
+            src={item.imageData}
+            alt={item.alt ?? item.command}
+            widths={[500, 1000, 1600]}
+            sizes="(max-width: 600px) 100vw, 50vw"
+            format="webp"
+            quality={90}
+            class="cc-img"
+          />
+        ) : item.src ? (
+          <img src={item.src} alt={item.alt ?? item.command} class="cc-img" />
+        ) : (
+          <div class="cc-placeholder">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span class="cc-placeholder-label">Add image</span>
+          </div>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .cc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.75rem 0;
+  }
+
+  @media (max-width: 640px) {
+    .cc-grid { grid-template-columns: 1fr; }
+  }
+
+  .cc-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.875rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+    min-width: 0;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  /* Command line */
+  .cc-cmdline {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono, "SF Mono", ui-monospace, monospace);
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+
+  .cc-prompt {
+    color: var(--text-3);
+    flex-shrink: 0;
+  }
+
+  .cc-cmd {
+    color: var(--text);
+  }
+
+  .cc-cmd-token {
+    color: var(--coral);
+    font-weight: 600;
+  }
+
+  /* Image / placeholder area */
+  .cc-img-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--showcase-bg);
+  }
+
+  .cc-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  .cc-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--coral);
+    opacity: 0.4;
+    margin: 0.75rem;
+    border: 1.5px dashed var(--coral-mid);
+    border-radius: 0.75rem;
+  }
+
+  .cc-placeholder-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+</style>

@@ -1,0 +1,432 @@
+---
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface Props {
+  beforeLabel?: string;
+  beforeSrc: string;
+  beforeAlt?: string;
+  afterLabel?: string;
+}
+
+const {
+  beforeLabel = "Before",
+  beforeSrc,
+  beforeAlt = "Literal token palettes grouped by color value",
+  afterLabel = "After",
+} = Astro.props;
+
+const beforeImageData = await resolveImage(beforeSrc);
+
+const semanticTokens = [
+  { name: "colors.bg", light: "#f6f5f7", dark: "#0d0c0d" },
+  { name: "colors.bg.surface.brand.secondary", light: "#070060", dark: "#211a80" },
+  { name: "colors.bg.surface", light: "#ffffff", dark: "#242425" },
+  { name: "colors.bg.surface.secondary", light: "#dfdfeb", dark: "#312c3b" },
+  { name: "colors.bg.surface.overlay", light: "#f6f5f7", dark: "#373738" },
+  { name: "colors.bg.surface.nav", light: "#ffffff", dark: "#242425" },
+  { name: "colors.bg.backdrop", light: "rgba(49, 44, 59, 0.6)", dark: "rgba(49, 44, 59, 0.6)" },
+  { name: "colors.bg.surface.input", light: "rgba(223, 223, 235, 0.5)", dark: "rgba(255, 255, 255, 0.12)" },
+  { name: "colors.bg.surface.media", light: "#0d0c0d", dark: "#0d0c0d" },
+  { name: "colors.text.primary", light: "#312c3b", dark: "#ffffff" },
+  { name: "colors.text.secondary", light: "rgba(30, 13, 64, 0.7)", dark: "rgba(255, 255, 255, 0.6)" },
+  { name: "colors.text.tertiary", light: "rgba(49, 44, 59, 0.6)", dark: "rgba(255, 255, 255, 0.5)" },
+  { name: "colors.text.brand", light: "#5616d9", dark: "#874fff" },
+  { name: "colors.text.on.surface", light: "#ffffff", dark: "#ffffff" },
+  { name: "colors.text.on.brand.accent", light: "#85d6ff", dark: "#85d6ff" },
+  { name: "colors.text.on.brand.subtle", light: "#dfdfeb", dark: "#dfdfeb" },
+  { name: "colors.text.interactive", light: "#5616d9", dark: "#874fff" },
+  { name: "colors.text.critical", light: "#de3333", dark: "#ff4545" },
+  { name: "colors.text.warning", light: "#cc831d", dark: "#cc831d" },
+  { name: "colors.text.information", light: "#007bff", dark: "#007bff" },
+  { name: "colors.text.success", light: "#398f4d", dark: "#63a653" },
+  { name: "colors.text.disabled", light: "rgba(49, 44, 59, 0.6)", dark: "rgba(255, 255, 255, 0.5)" },
+  { name: "colors.text.inverse", light: "#ffffff", dark: "#312c3b" },
+  { name: "colors.icon.primary", light: "#312c3b", dark: "#ffffff" },
+  { name: "colors.icon.secondary", light: "rgba(49, 44, 59, 0.6)", dark: "rgba(255, 255, 255, 0.5)" },
+  { name: "colors.icon.tertiary", light: "rgba(49, 44, 59, 0.3)", dark: "rgba(223, 223, 235, 0.3)" },
+  { name: "colors.icon.disabled", light: "rgba(49, 44, 59, 0.3)", dark: "rgba(223, 223, 235, 0.3)" },
+  { name: "colors.icon.brand", light: "#5616d9", dark: "#874fff" },
+  { name: "colors.icon.critical", light: "#de3333", dark: "#ff4545" },
+  { name: "colors.icon.warning", light: "#cc831d", dark: "#cc831d" },
+  { name: "colors.icon.success", light: "#398f4d", dark: "#63a653" },
+  { name: "colors.icon.information", light: "#007bff", dark: "#007bff" },
+  { name: "colors.icon.inverse", light: "#ffffff", dark: "#312c3b" },
+  { name: "colors.icon.on.surface", light: "#ffffff", dark: "#ffffff" },
+  { name: "colors.icon.on.avatar.neutral", light: "#312c3b", dark: "#ffffff" },
+  { name: "colors.icon.neutral", light: "#312c3b", dark: "#312c3b" },
+  { name: "colors.border.primary", light: "rgba(223, 223, 235, 0.5)", dark: "#79747e" },
+  { name: "colors.border.secondary", light: "rgba(30, 13, 64, 0.15)", dark: "#dfdfeb" },
+  { name: "colors.border.interactive", light: "#874fff", dark: "#5616d9" },
+  { name: "colors.border.inverse", light: "#ffffff", dark: "#312c3b" },
+  { name: "colors.bg.fill.brand", light: "#5616d9", dark: "#874fff" },
+  { name: "colors.bg.fill.brand.selected", light: "#5616d9", dark: "#874fff" },
+  { name: "colors.bg.fill.brand.active", light: "#874fff", dark: "#5616d9" },
+  { name: "colors.bg.fill.brand.accent", light: "rgba(86, 22, 217, 0.3)", dark: "rgba(135, 79, 255, 0.45)" },
+  { name: "colors.bg.fill.brand.disabled", light: "rgba(86, 22, 217, 0.3)", dark: "rgba(135, 79, 255, 0.45)" },
+  { name: "colors.bg.fill.secondary", light: "#dfdfeb", dark: "rgba(255, 255, 255, 0.25)" },
+  { name: "colors.bg.fill.tertiary", light: "rgba(223, 223, 235, 0.5)", dark: "rgba(255, 255, 255, 0.12)" },
+  { name: "colors.bg.fill.disabled", light: "rgba(223, 223, 235, 0.5)", dark: "rgba(255, 255, 255, 0.12)" },
+  { name: "colors.bg.fill.inverse", light: "rgba(49, 44, 59, 0.6)", dark: "rgba(255, 255, 255, 0.6)" },
+  { name: "colors.bg.fill.critical", light: "#de3333", dark: "#de3333" },
+  { name: "colors.bg.fill.critical.active", light: "#ff4545", dark: "#de3333" },
+  { name: "colors.bg.fill.interactive", light: "#ffffff", dark: "rgba(255, 255, 255, 0.12)" },
+  { name: "colors.bg.fill.selected", light: "#070060", dark: "#211a80" },
+  { name: "colors.bg.fill.success", light: "#398f4d", dark: "#63a653" },
+  { name: "colors.bg.fill.warning", light: "#cc831d", dark: "#cc831d" },
+  { name: "colors.bg.fill.information", light: "#007bff", dark: "#007bff" },
+  { name: "colors.bg.fill.neutral", light: "rgba(255, 255, 255, 0.6)", dark: "rgba(255, 255, 255, 0.6)" },
+  { name: "colors.bg.avatar.user", light: "#070060", dark: "#211a80" },
+  { name: "colors.bg.avatar.company", light: "#1f8bff", dark: "#007bff" },
+  { name: "colors.bg.avatar.critcial", light: "#de3333", dark: "#ff4545" },
+  { name: "colors.bg.avatar.contact", light: "#63a653", dark: "#398f4d" },
+  { name: "colors.bg.avatar.neutral", light: "#dfdfeb", dark: "#312c3b" },
+  { name: "colors.bg.avatar.warning", light: "#cc831d", dark: "#cc831d" },
+  { name: "colors.bg.avatar.on.brand", light: "#dfdfeb", dark: "#dfdfeb" },
+  { name: "colors.bg.avatar.hiya.asssistant", light: "#653bd4", dark: "#653bd4" },
+];
+
+const tokenRows = [
+  semanticTokens.slice(0, 22),
+  semanticTokens.slice(22, 44),
+  semanticTokens.slice(44),
+];
+---
+
+<div class="token-compare">
+  <section class="token-compare__panel">
+    <div class="token-compare__media">
+      {beforeImageData ? (
+        <Image
+          src={beforeImageData}
+          alt={beforeAlt}
+          widths={[600, 1200, 2000]}
+          sizes="(max-width: 680px) 100vw, 50vw"
+          format="webp"
+          quality={90}
+          class="token-compare__image"
+        />
+      ) : (
+        <img src={beforeSrc} alt={beforeAlt} class="token-compare__image" />
+      )}
+    </div>
+    <p class="token-compare__caption token-compare__caption--before">← {beforeLabel}</p>
+  </section>
+
+  <section class="token-compare__panel">
+    <div class="semantic-token-marquee" aria-label="Semantic color tokens moving from right to left">
+      <div class="semantic-token-marquee__header">
+        <span>Semantic color tokens</span>
+        <span>{semanticTokens.length} mapped tokens</span>
+      </div>
+
+      <div class="semantic-token-marquee__rows">
+        {tokenRows.map((row, rowIndex) => (
+          <div class="semantic-token-marquee__row" style={`--row-index: ${rowIndex}`}>
+            <div class="semantic-token-marquee__track">
+              {[...row, ...row].map((token) => (
+                <article class="semantic-token" aria-label={`${token.name}, light ${token.light}, dark ${token.dark}`}>
+                  <span class="semantic-token__body">
+                    <span class="semantic-token__swatches" aria-hidden="true">
+                      <span class="semantic-token__swatch semantic-token__swatch--light" style={`background: ${token.light}`}></span>
+                      <span class="semantic-token__swatch semantic-token__swatch--dark" style={`background: ${token.dark}`}></span>
+                    </span>
+                    <span class="semantic-token__name">{token.name}</span>
+                  </span>
+                  <span class="semantic-token__raw">
+                    Light {token.light}
+                    <span aria-hidden="true">/</span>
+                    Dark {token.dark}
+                  </span>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <p class="token-compare__caption token-compare__caption--after">{afterLabel} →</p>
+  </section>
+</div>
+
+<style>
+  .token-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.75rem 0;
+  }
+
+  .token-compare__panel {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .token-compare__media,
+  .semantic-token-marquee {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3588 / 2936;
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    background: var(--showcase-bg);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03),
+      0 16px 32px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+  }
+
+  .token-compare__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  .token-compare__media .token-compare__image {
+    transform: translate(2.5%, -12%) scale(1.1);
+    transform-origin: top center;
+  }
+
+  .token-compare__caption {
+    margin: 0;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .token-compare__caption--before {
+    color: var(--text-3);
+  }
+
+  .token-compare__caption--after {
+    color: var(--coral);
+  }
+
+  .semantic-token-marquee {
+    --marquee-gap: 0.55rem;
+    --token-width: clamp(10.6rem, 17vw, 13.4rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(1rem, 2.4vw, 1.55rem) 0;
+  }
+
+  .semantic-token-marquee::before,
+  .semantic-token-marquee::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    z-index: 3;
+    width: 4.2rem;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .semantic-token-marquee::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--showcase-bg) 8%, color-mix(in srgb, var(--showcase-bg) 0%, transparent));
+  }
+
+  .semantic-token-marquee::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--showcase-bg) 8%, color-mix(in srgb, var(--showcase-bg) 0%, transparent));
+  }
+
+  .semantic-token-marquee__header {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0 clamp(1rem, 2.4vw, 1.55rem) 0.9rem;
+    color: var(--text-3);
+    font-family: var(--font-sans);
+    font-size: clamp(0.58rem, 1vw, 0.68rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .semantic-token-marquee__header span:first-child {
+    color: var(--text);
+  }
+
+  .semantic-token-marquee__rows {
+    display: grid;
+    gap: 0.62rem;
+    width: 100%;
+  }
+
+  .semantic-token-marquee__row {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 4.4rem;
+    overflow: visible;
+  }
+
+  .semantic-token-marquee__track {
+    display: flex;
+    gap: var(--marquee-gap);
+    width: max-content;
+    padding: 0 var(--marquee-gap);
+    animation: token-scroll calc(68s + (var(--row-index) * 12s)) linear infinite;
+    animation-delay: calc(var(--row-index) * -16s);
+    will-change: transform;
+  }
+
+  .semantic-token-marquee:hover .semantic-token-marquee__track {
+    animation-play-state: paused;
+  }
+
+  .semantic-token {
+    position: relative;
+    flex: 0 0 var(--token-width);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 3.7rem;
+    padding: 0.62rem 0.68rem;
+    border: 1px solid color-mix(in srgb, var(--border) 82%, #ffffff);
+    border-radius: 0.38rem;
+    background: color-mix(in srgb, var(--card) 94%, var(--showcase-bg));
+    box-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.025),
+      0 6px 14px rgba(49, 44, 59, 0.055);
+    transform-origin: center;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .semantic-token:hover {
+    z-index: 8;
+    border-color: color-mix(in srgb, #6f35ff 34%, var(--border));
+    box-shadow:
+      0 10px 28px rgba(49, 44, 59, 0.13),
+      0 0 0 1px color-mix(in srgb, #6f35ff 12%, transparent);
+    transform: scale(1.07);
+  }
+
+  .semantic-token__body {
+    display: flex;
+    align-items: center;
+    gap: 0.48rem;
+    min-width: 0;
+  }
+
+  .semantic-token__swatches {
+    position: relative;
+    flex: 0 0 1.85rem;
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .semantic-token__swatch {
+    position: absolute;
+    display: block;
+    border-radius: 999px;
+  }
+
+  .semantic-token__swatch--light {
+    inset: 0.02rem 0.35rem 0.35rem 0.02rem;
+    border: 1px solid color-mix(in srgb, var(--border) 78%, #ffffff);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.68);
+  }
+
+  .semantic-token__swatch--dark {
+    right: 0.02rem;
+    bottom: 0.02rem;
+    width: 1.22rem;
+    height: 1.22rem;
+    border: 2px solid color-mix(in srgb, var(--card) 92%, #ffffff);
+  }
+
+  .semantic-token__name {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: clamp(0.72rem, 1.25vw, 0.92rem);
+    font-weight: 760;
+    letter-spacing: 0;
+    line-height: 1.16;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .semantic-token__raw {
+    display: flex;
+    align-items: center;
+    gap: 0.28rem;
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 0.48rem;
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 1.35;
+    opacity: 0;
+    transition:
+      max-height 180ms ease,
+      margin-top 180ms ease,
+      opacity 160ms ease;
+    white-space: nowrap;
+  }
+
+  .semantic-token:hover .semantic-token__raw {
+    max-height: 2rem;
+    margin-top: 0.48rem;
+    opacity: 1;
+  }
+
+  @keyframes token-scroll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(calc(-50% - (var(--marquee-gap) / 2)), 0, 0);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .token-compare {
+      grid-template-columns: 1fr;
+    }
+
+    .semantic-token-marquee {
+      --token-width: 12rem;
+      min-height: 23rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .semantic-token-marquee__track {
+      animation-play-state: paused;
+      transform: translate3d(-12%, 0, 0);
+    }
+
+    .semantic-token {
+      transition: none;
+    }
+  }
+</style>

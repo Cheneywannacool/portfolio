@@ -1,0 +1,179 @@
+---
+/**
+ * ScrollingCards — horizontally auto-scrolling row of image cards
+ * (Vercel brand-assets-page style: image on top, bold title + description below).
+ *
+ * Scrolls continuously and indefinitely via a CSS keyframe loop (content is
+ * duplicated once so the loop is seamless — no stop/restart) and respects
+ * reduced-motion.
+ *
+ * Usage in MDX:
+ *   <ScrollingCards items={[
+ *     { src: "/images/ds-imagecards/brand.png", title: "Brand", description: "..." },
+ *   ]} />
+ */
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface CardItem {
+  src: string;
+  title: string;
+  description: string;
+  alt?: string;
+}
+
+interface Props {
+  items: CardItem[];
+  /** Seconds for one full loop of the (single) item set. Defaults to items.length * 3.5 */
+  speed?: number;
+}
+
+const { items, speed } = Astro.props;
+const duration = speed ?? Math.max(items.length * 3.5, 18);
+
+const resolvedItems = await Promise.all(
+  items.map(async (item) => ({ ...item, imageData: await resolveImage(item.src) }))
+);
+
+// Duplicate the row so the CSS loop (translateX(-50%)) is seamless.
+const track = [...resolvedItems, ...resolvedItems];
+---
+
+<div class="sc-wrap">
+  <div class="sc-track" style={`animation-duration:${duration * 2}s;`}>
+    {track.map((item, i) => (
+      <div class="sc-card" aria-hidden={i >= resolvedItems.length ? "true" : undefined}>
+        <div class="sc-img-wrap">
+          {item.imageData ? (
+            <Image
+              src={item.imageData}
+              alt={item.alt ?? item.title}
+              widths={[400, 800]}
+              sizes="320px"
+              format="webp"
+              quality={90}
+              loading="eager"
+              class="sc-img"
+            />
+          ) : (
+            <img src={item.src} alt={item.alt ?? item.title} class="sc-img" />
+          )}
+        </div>
+        <div class="sc-text">
+          <p class="sc-title">{item.title}</p>
+          <p class="sc-desc">{item.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .sc-wrap {
+    position: relative;
+    width: 100vw;
+    margin: 1.75rem calc(50% - 50vw);
+    overflow: hidden;
+    contain: paint;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 5%,
+      #000 95%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 5%,
+      #000 95%,
+      transparent 100%
+    );
+  }
+
+  .sc-track {
+    display: flex;
+    width: max-content;
+    gap: 1.125rem;
+    padding: 0.25rem calc(50vw - min(52rem, 100vw) / 2);
+    animation-name: sc-scroll;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes sc-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sc-track {
+      animation: none;
+    }
+  }
+
+  .sc-card {
+    flex: 0 0 auto;
+    width: 17rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  .sc-img-wrap {
+    position: relative;
+    width: 100%;
+    /* Classic padding-box aspect-ratio hack (2000/2572 = 77.76%) — used instead of
+       the CSS `aspect-ratio` property because that property, combined with an
+       absolutely-positioned percentage-sized child, resolves inconsistently
+       across browsers (some crop the image instead of showing it uncropped). */
+    padding-top: 77.76%;
+    background: var(--showcase-bg);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .sc-img {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  .sc-text {
+    padding: 0.9rem 1.125rem 1.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .sc-title {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .sc-desc {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>

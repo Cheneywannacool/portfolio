@@ -1,0 +1,338 @@
+---
+/**
+ * ChangelogSplit — left/right split: an image on the left (e.g. a real PR
+ * comment or diff screenshot) paired with a compact, styled changelog on
+ * the right (version badges + Added/Fixed/Changed/Removed sections).
+ *
+ * Usage in MDX:
+ *   <ChangelogSplit
+ *     src="/images/foo.png"
+ *     entries={[
+ *       {
+ *         version: "1.5.0",
+ *         date: "2026-07-27",
+ *         title: "Typography bold tier + DS.Icons regeneration",
+ *         sections: [
+ *           { label: "Added", items: ["`DS.Typography.headingMDBold` — 24pt Bold, resolves the \"no bold tier\" ask."] },
+ *           { label: "Fixed", items: ["`infoBold` pointed at the wrong-case raw string."] },
+ *         ],
+ *       },
+ *     ]}
+ *   />
+ */
+import { Image } from "astro:assets";
+import { resolveImage } from "../../utils/images";
+
+interface ChangelogSection {
+  label: string;
+  items: string[];
+}
+
+interface ChangelogEntry {
+  version: string;
+  date?: string;
+  title?: string;
+  sections: ChangelogSection[];
+}
+
+interface Props {
+  src?: string;
+  alt?: string;
+  aspectRatio?: string;
+  entries: ChangelogEntry[];
+}
+
+const { src, alt, aspectRatio = "4/3", entries } = Astro.props;
+const imageData = await resolveImage(src);
+
+/** Minimal inline markdown: `code` -> <code>, **bold** -> <strong> */
+function mdInline(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+}
+
+/** Maps a section label to a badge color variant. */
+function badgeVariant(label: string): string {
+  const key = label.toLowerCase();
+  if (key.startsWith("add")) return "added";
+  if (key.startsWith("fix")) return "fixed";
+  if (key.startsWith("change")) return "changed";
+  if (key.startsWith("remov") || key.startsWith("deprecat")) return "removed";
+  return "default";
+}
+---
+
+<div class={`cl-wrap${imageData || src ? "" : " cl-wrap--solo"}`}>
+  <!-- Left: image (omitted entirely when no src is given) -->
+  {(imageData || src) && (
+    <div class="cl-image-col">
+      <div class="cl-img-wrap" style={`aspect-ratio:${aspectRatio};`}>
+        {imageData ? (
+          <Image
+            src={imageData}
+            alt={alt ?? "Changelog evidence"}
+            widths={[500, 1000, 1600]}
+            sizes="(max-width: 700px) 100vw, 45vw"
+            format="webp"
+            quality={90}
+            class="cl-img"
+          />
+        ) : (
+          <img src={src} alt={alt ?? "Changelog evidence"} class="cl-img" />
+        )}
+      </div>
+    </div>
+  )}
+
+  <!-- Right: changelog -->
+  <div class="cl-panel" aria-label="Changelog">
+    <span class="cl-panel-label">Changelog</span>
+    <div class="cl-entries">
+      {entries.map((entry) => (
+      <article class="cl-entry">
+        <div class="cl-entry-head">
+          <span class="cl-version">v{entry.version}</span>
+          {entry.date && <span class="cl-date">{entry.date}</span>}
+        </div>
+        {entry.title && <p class="cl-title">{entry.title}</p>}
+        {entry.sections.map((section) => (
+          <div class="cl-section">
+            <span class={`cl-badge cl-badge--${badgeVariant(section.label)}`}>
+              <span class="cl-badge-dot" aria-hidden="true"></span>
+              {section.label}
+            </span>
+            <div class="cl-items">
+              {section.items.map((item) => (
+                <div class="cl-item" set:html={mdInline(item)} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </article>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .cl-wrap {
+    display: grid;
+    grid-template-columns: 0.95fr 1.15fr;
+    gap: 1.25rem;
+    margin: 1.75rem 0;
+    align-items: start;
+  }
+
+  @media (max-width: 700px) {
+    .cl-wrap { grid-template-columns: 1fr; }
+  }
+
+  .cl-wrap--solo {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Left: image ─────────────────────────────────── */
+  .cl-image-col {
+    position: sticky;
+    top: 2rem;
+  }
+
+  @media (max-width: 700px) {
+    .cl-image-col { position: static; }
+  }
+
+  .cl-img-wrap {
+    position: relative;
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--showcase-bg);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03),
+      0 16px 32px rgba(0, 0, 0, 0.02);
+  }
+
+  .cl-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  .cl-panel {
+    width: 100%;
+  }
+
+  .cl-panel-label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 0.9rem;
+  }
+
+  .cl-entries {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  @media (max-width: 820px) {
+    .cl-entries {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cl-entry {
+    min-width: 0;
+    padding: 1.05rem 1.1rem 1.15rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--card);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  .cl-entry-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    margin-bottom: 0.38rem;
+  }
+
+  .cl-version {
+    font-family: var(--font-mono, "SF Mono", ui-monospace, monospace);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .cl-date {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-3);
+  }
+
+  .cl-title {
+    font-family: var(--font-sans);
+    font-size: clamp(0.82rem, 1.25vw, 0.92rem);
+    font-weight: 720;
+    line-height: 1.28;
+    color: var(--text);
+    margin: 0 0 0.9rem !important;
+  }
+
+  .cl-section {
+    margin-bottom: 0.72rem;
+  }
+
+  .cl-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .cl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.32rem;
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 9999px;
+    padding: 0.2rem 0.55rem 0.2rem 0.45rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cl-badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 9999px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* Distinct per-type treatment so Added/Fixed/Changed/Removed scan at a glance */
+  .cl-badge--added {
+    color: #1a8a4a;
+    background: rgba(34, 197, 94, 0.13);
+  }
+
+  .cl-badge--fixed {
+    color: #2563eb;
+    background: rgba(59, 130, 246, 0.12);
+  }
+
+  .cl-badge--changed {
+    color: #b45309;
+    background: rgba(245, 158, 11, 0.14);
+  }
+
+  .cl-badge--removed {
+    color: var(--text-3);
+    background: var(--border-2);
+  }
+
+  .cl-badge--default {
+    color: var(--coral);
+    background: var(--tag-bg);
+  }
+
+  .cl-items {
+    margin: 0;
+  }
+
+  .cl-item {
+    position: relative;
+    padding-left: 0.9rem;
+    margin-bottom: 0.35rem;
+    font-size: clamp(0.72rem, 1.1vw, 0.8rem);
+    line-height: 1.48;
+    color: var(--text-2);
+  }
+
+  .cl-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .cl-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 4px;
+    height: 4px;
+    border-radius: 9999px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  .cl-items :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    background: var(--tag-bg);
+    color: var(--coral);
+    padding: 0.1em 0.35em;
+    border-radius: 0.3em;
+  }
+
+  .cl-items :global(strong) {
+    font-weight: 700;
+    color: var(--text);
+  }
+</style>
